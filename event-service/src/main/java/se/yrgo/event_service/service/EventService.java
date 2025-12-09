@@ -10,6 +10,6 @@ public interface EventService {
     EventResponseDTO createEvent(EventCreateDTO eventCreateDTO);
     EventResponseDTO updateEvent(Long id, EventCreateDTO dto);
     void deleteEvent(Long id);
-    EventResponseDTO getEvent(Long id);
+    EventResponseDTO getEventById(Long id);
     List<EventResponseDTO> getAllEvents();
 }

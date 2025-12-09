@@ -1,7 +1,10 @@
 package se.yrgo.event_service.dtos;
 
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 
+@Component
 public class EventCreateDTO {
     private String name;
     private String description;
