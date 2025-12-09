@@ -1,0 +1,164 @@
+package se.yrgo.event_service.domain;
+
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+@Entity
+public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String eventId;
+    private String name;
+    private String description;
+    private String location;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    private String artist;
+    private int capacity;
+    private LocalDateTime eventDateAndTime;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    public Event() {
+    }
+
+    public Event(
+            String eventId,
+            String name,
+            String description,
+            String location,
+            Category category,
+            String artist,
+            int capacity,
+            LocalDateTime eventDateAndTime) {
+        this.eventId = eventId;
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.category = category;
+        this.artist = artist;
+        this.capacity = capacity;
+        this.eventDateAndTime = eventDateAndTime;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public LocalDateTime getEventDateAndTime() {
+        return eventDateAndTime;
+    }
+
+    public void setEventDateAndTime(LocalDateTime eventDateAndTime) {
+        this.eventDateAndTime = eventDateAndTime;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = this.createdAt;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Event event)) return false;
+        return Objects.equals(id, event.id) && Objects.equals(eventId, event.eventId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, eventId);
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", eventId='" + eventId + '\'' +
+                ", name='" + name + '\'' +
+                ", location='" + location + '\'' +
+                ", categoryId=" + (category != null ? category.getCategoryId() : null) +
+                ", artist='" + artist + '\'' +
+                ", capacity=" + capacity +
+                ", eventDateAndTime=" + eventDateAndTime +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
+}
