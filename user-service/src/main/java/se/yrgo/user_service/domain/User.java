@@ -8,27 +8,34 @@ import java.time.LocalDate;
 public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private String id;
+    private Long id;
+
+    private String customerId;
     private String name;
     private String email;
     private LocalDate birthdate;
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Booking> bookings;
+    private List<Booking> bookings = new ArrayList<>();
 
     public User() {
 
     }
 
-    public User(String name, String email, LocalDate birthdate) {
+    public User(String customerId, String name, String email, LocalDate birthdate) {
+        this.customerId = customerId;
         this.name = name;
         this.email = email;
         this.birthdate = birthdate;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
+    }
+
+    public String getCustomerId() {
+        return customerId;
     }
 
     public String getName() {
@@ -43,8 +50,8 @@ public class User {
         return birthdate;
     }
 
-    public void setId(String customer_id) {
-        this.id = id;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public void setName(String name) {
