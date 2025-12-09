@@ -3,9 +3,13 @@ package se.yrgo.bookingservice.controllers;
 import se.yrgo.bookingservice.services.BookingService;
 
 public class BookingController {
-    private BookingService bookingService;
+    private final BookingService bookingService;
 
-    void createNewBooking(String user) {
+    public BookingController(BookingService bookingService) {
+        this.bookingService = bookingService;
+    }
 
+    public void registerNewBooking(String eventId, String userId, int noOfTickets, boolean isRefundable  ) {
+        bookingService.createBooking(eventId, userId, noOfTickets, isRefundable );
     }
 }

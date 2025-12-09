@@ -1,5 +1,6 @@
 package se.yrgo.bookingservice.services;
 
+import org.springframework.stereotype.Service;
 import se.yrgo.bookingservice.data.BookingRepository;
 import se.yrgo.bookingservice.domain.Booking;
 import se.yrgo.bookingservice.domain.Ticket;
@@ -9,29 +10,18 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class BookingService {
-    private BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository;
+    private final TicketService ticketService;
 
-    public BookingService(BookingRepository bookingRepository) {
+    public BookingService(BookingRepository bookingRepository, TicketService ticketService) {
         this.bookingRepository = bookingRepository;
+        this.ticketService = ticketService;
+
     }
 
-    private void createBooking(String eventId, String userId, int noOfTickets, boolean isRefundable){
-        Booking booking = new Booking();
-        try {
-            booking.setBookingId(generateBookingId());
-            booking.setDateOfBooking(LocalDateTime.now(ZoneId.of("UTC")));
-            booking.setEventID(eventId);
-            booking.setCustomerId(userId);
-            booking.setTickets(generateTickets(noOfTickets));
-            booking.setRefundable(isRefundable);
-            bookingRepository.save(booking);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String generateBookingId() {
+    private String generateBookingId() {
         return "BKG-" + java.util.UUID.randomUUID()
                 .toString()
                 .replace("-", "")
@@ -39,12 +29,4 @@ public class BookingService {
                 .toUpperCase();
     }
 
-    private static List<Ticket> generateTickets(int amount) {
-        List<Ticket> tickets = new ArrayList<>();
-        for (int i = 0; i < amount; i++) {
-            Ticket ticket = new Ticket();
-            tickets.add(ticket);
-        }
-        return tickets;
-    }
 }
