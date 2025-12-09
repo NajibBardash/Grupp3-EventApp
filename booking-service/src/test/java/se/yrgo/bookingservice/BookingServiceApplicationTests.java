@@ -1,4 +1,4 @@
-package se.yrgo.booking_service;
+package se.yrgo.bookingservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
