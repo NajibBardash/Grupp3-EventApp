@@ -20,19 +20,14 @@ public class UserController {
         this.balancer = balancer;
     }
 
-    // Function: Create User
-    //...
 
-    // Function: Delete User
-    //...
+    // TODO: Function: Create User
 
-    // Function: List All Users.
-    //...
+    // TODO: Function: Delete User
 
-    // Function: Show User By customerId
-    //...
+    // TODO: Function: List All Users.
 
-    // Function: Show User By Name
-    //...
+    // TODO: Function: Show User By customerId
 
+    // TODO: Function: Show User By Name
 }

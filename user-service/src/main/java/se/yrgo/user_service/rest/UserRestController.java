@@ -11,18 +11,17 @@ public class UserRestController {
     private UserRepository data;
 
 
-    // Function: Show All Users
+    // TODO: Function: Show All Users
     //...
 
-    // Function: Create User
+    // TODO: Function: Create User
     //...
 
-
+// TODO:  Add and implement
 //    public void addUser (Booking booking) {
 //        this.bookings.add(booking);
 //        booking.setUser(this);
 //    }
-//
 //    public void removeUser (Booking booking) {
 //        this.bookings.remove(booking);
 //        booking.setUser(null);

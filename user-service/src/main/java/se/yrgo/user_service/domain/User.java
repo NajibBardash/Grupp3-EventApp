@@ -16,8 +16,9 @@ public class User {
     private LocalDate birthdate;
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Booking> bookings = new ArrayList<>();
+
+    //TODO: Solve this later, with the other applications.
+    //private List<Booking> bookings = new ArrayList<>();
 
     public User() {
 
@@ -66,8 +67,9 @@ public class User {
         this.email = email;
     }
 
-    public List<Booking> getBookings() {
-        return bookings;
-    }
+    // TODO: See List <Booking> Above
+//    public List<Booking> getBookings() {
+//        return bookings;
+//    }
 
 }
