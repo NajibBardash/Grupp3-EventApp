@@ -1,8 +1,15 @@
 package se.yrgo.bookingservice.controllers;
 
-import se.yrgo.bookingservice.dto.BookingCreateDTO;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import se.yrgo.bookingservice.dto.BookingRequestDTO;
+import se.yrgo.bookingservice.dto.BookingResponseDTO;
 import se.yrgo.bookingservice.services.BookingServiceImpl;
 
+import java.util.List;
+
+@RestController
 public class BookingController {
     private final BookingServiceImpl bookingService;
 
@@ -10,7 +17,26 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    public void registerNewBooking(BookingCreateDTO bookingCreateDTO) {
-        bookingService.createBooking(bookingCreateDTO);
+    @PostMapping("/booking")
+    public ResponseEntity<BookingResponseDTO> registerNewBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
+        if (bookingRequestDTO != null) {
+            System.out.println(bookingRequestDTO);
+            BookingResponseDTO created =  bookingService.createBooking(bookingRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/booking/{bookingId}")
+    public BookingResponseDTO getBooking(@PathVariable String bookingId) {
+        if (bookingId != null) {
+            return bookingService.getBookingById(bookingId);
+        }
+        return null;
+    }
+
+    @GetMapping("/bookings")
+    public List<BookingResponseDTO> getAllBookings() {
+        return bookingService.getAllBookings();
     }
 }

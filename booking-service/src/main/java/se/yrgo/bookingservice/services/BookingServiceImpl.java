@@ -3,39 +3,43 @@ package se.yrgo.bookingservice.services;
 import org.springframework.stereotype.Service;
 import se.yrgo.bookingservice.data.BookingRepository;
 import se.yrgo.bookingservice.domain.Booking;
-import se.yrgo.bookingservice.dto.BookingCreateDTO;
+import se.yrgo.bookingservice.domain.Ticket;
+import se.yrgo.bookingservice.dto.BookingRequestDTO;
 import se.yrgo.bookingservice.dto.BookingResponseDTO;
+import se.yrgo.bookingservice.dto.TicketResponseDTO;
 import se.yrgo.bookingservice.factory.TicketFactory;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-    private final TicketService ticketService;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, TicketService ticketService) {
+    public BookingServiceImpl(BookingRepository bookingRepository) {
         this.bookingRepository = bookingRepository;
-        this.ticketService = ticketService;
     }
 
-    public BookingResponseDTO createBooking(BookingCreateDTO dto) {
+    public BookingResponseDTO createBooking(BookingRequestDTO dto) {
+        List<Ticket> tickets = TicketFactory.createTickets(dto.getNumberOfTickets());
         Booking booking = Booking.builder()
                 .dateOfBooking(LocalDateTime.now(ZoneId.of("UTC")))
                 .eventId(dto.getEventId())
                 .customerId(dto.getCustomerId())
-                .tickets(TicketFactory.createTickets(dto.getNumberOfTickets())) // replace
-                .isRefundable(dto.isRefundable())
+                .tickets(tickets)
+                .refundable(dto.isRefundable())
                 .build();
-        bookingRepository.save(booking);
 
-        return mapToResponseDTO(booking);
+        Booking savedBooking = bookingRepository.save(booking);
+
+        return mapToResponseDTO(savedBooking);
     }
 
     @Override
-    public BookingResponseDTO getBooking(String bookingId) {
+    public BookingResponseDTO getBookingById(String bookingId) {
         return mapToResponseDTO(bookingRepository.findByBookingId(bookingId));
     }
 
@@ -49,8 +53,15 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void deleteBooking(String bookingId) {
         Booking bookingToDelete = bookingRepository.findByBookingId(bookingId);
-        bookingRepository.delete(bookingToDelete);
+        if (bookingToDelete != null) {
+            bookingRepository.delete(bookingToDelete);
+        }
     }
+
+//    @Override
+//    public BookingResponseDTO editBooking(BookingRequestDTO editDto) {
+//        Booking bookingToEdit = bookingRepository.findByBookingId(editDto.get)
+//    }
 
     private BookingResponseDTO mapToResponseDTO(Booking booking) {
         return new BookingResponseDTO(
@@ -58,7 +69,12 @@ public class BookingServiceImpl implements BookingService {
                 booking.getDateOfBooking(),
                 booking.getCustomerId(),
                 booking.getEventId(),
-                booking.getTickets(),
+                booking.getTickets().stream()
+                    .map(ticket ->
+                            new TicketResponseDTO(ticket.getTicketId(),
+                                    booking.getBookingId(),
+                                    ticket.getPrice()))
+                .collect(toList()),
                 booking.isRefundable()
         );
     }

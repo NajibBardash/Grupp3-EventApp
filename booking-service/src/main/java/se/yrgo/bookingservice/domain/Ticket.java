@@ -6,9 +6,9 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +21,6 @@ public class Ticket {
     private Booking booking;
 
     // Makes sure the entity gets a legit ID before persisting
-
     @PrePersist
     private void init() {
         if (ticketId == null) {
