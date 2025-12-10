@@ -1,15 +1,14 @@
 package se.yrgo.bookingservice.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +20,20 @@ public class Ticket {
     @ManyToOne
     private Booking booking;
 
-    public Ticket() {}
+    // Makes sure the entity gets a legit ID before persisting
+
+    @PrePersist
+    private void init() {
+        if (ticketId == null) {
+            ticketId = generateTicketId();
+        }
+    }
+
+    private String generateTicketId() {
+        return "TKT-" + java.util.UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, 8)
+                .toUpperCase();
+    }
 }

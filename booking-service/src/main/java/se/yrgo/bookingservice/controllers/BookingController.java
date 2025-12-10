@@ -1,15 +1,16 @@
 package se.yrgo.bookingservice.controllers;
 
-import se.yrgo.bookingservice.services.BookingService;
+import se.yrgo.bookingservice.dto.BookingCreateDTO;
+import se.yrgo.bookingservice.services.BookingServiceImpl;
 
 public class BookingController {
-    private final BookingService bookingService;
+    private final BookingServiceImpl bookingService;
 
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingServiceImpl bookingService) {
         this.bookingService = bookingService;
     }
 
-    public void registerNewBooking(String eventId, String userId, int noOfTickets, boolean isRefundable  ) {
-        bookingService.createBooking(eventId, userId, noOfTickets, isRefundable );
+    public void registerNewBooking(BookingCreateDTO bookingCreateDTO) {
+        bookingService.createBooking(bookingCreateDTO);
     }
 }

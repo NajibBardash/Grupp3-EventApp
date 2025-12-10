@@ -7,4 +7,5 @@ import se.yrgo.bookingservice.domain.Booking;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
+    Booking findByBookingId(String bookingId);
 }
