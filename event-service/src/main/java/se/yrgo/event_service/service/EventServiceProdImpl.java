@@ -92,6 +92,7 @@ public class EventServiceProdImpl implements EventService {
                 category,
                 dto.getArtist(),
                 dto.getCapacity(),
+                dto.getAvailableTickets(),
                 dto.getEventDateAndTime()
         );
     }
@@ -106,6 +107,7 @@ public class EventServiceProdImpl implements EventService {
                 event.getCategory().getType(),
                 event.getArtist(),
                 event.getCapacity(),
+                event.getAvailableTickets(),
                 event.getEventDateAndTime(),
                 event.getCreatedAt()
         );
