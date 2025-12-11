@@ -12,6 +12,7 @@ public class EventCreateDTO {
     private String categoryId;
     private String artist;
     private int capacity;
+    private int availableTickets;
     private LocalDateTime eventDateAndTime;
 
     public EventCreateDTO() {}
@@ -23,6 +24,7 @@ public class EventCreateDTO {
             String categoryId,
             String artist,
             int capacity,
+            int availableTickets,
             LocalDateTime eventDateAndTime
     ) {
         this.name = name;
@@ -31,6 +33,7 @@ public class EventCreateDTO {
         this.categoryId = categoryId;
         this.artist = artist;
         this.capacity = capacity;
+        this.availableTickets = availableTickets;
         this.eventDateAndTime = eventDateAndTime;
     }
 
@@ -81,6 +84,10 @@ public class EventCreateDTO {
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
+
+    public int getAvailableTickets() { return availableTickets; }
+
+    public void setAvailableTickets(int availableTickets) { this.availableTickets = availableTickets; }
 
     public LocalDateTime getEventDateAndTime() {
         return eventDateAndTime;
