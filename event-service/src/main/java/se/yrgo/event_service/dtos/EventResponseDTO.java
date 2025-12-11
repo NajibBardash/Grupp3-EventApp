@@ -15,7 +15,8 @@ public class EventResponseDTO {
     private LocalDateTime eventDateAndTime;
     private LocalDateTime createdAt;
 
-    public EventResponseDTO() {}
+    public EventResponseDTO() {
+    }
 
     public EventResponseDTO(
             Long id,
@@ -106,9 +107,13 @@ public class EventResponseDTO {
         this.capacity = capacity;
     }
 
-    public int getAvailableTickets() { return availableTickets; }
+    public int getAvailableTickets() {
+        return availableTickets;
+    }
 
-    public void setAvailableTickets(int availableTickets) { this.availableTickets = availableTickets; }
+    public void setAvailableTickets(int availableTickets) {
+        this.availableTickets = availableTickets;
+    }
 
     public LocalDateTime getEventDateAndTime() {
         return eventDateAndTime;
