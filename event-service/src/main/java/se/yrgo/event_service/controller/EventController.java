@@ -4,8 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import se.yrgo.event_service.dtos.CategoryCreateDTO;
+import se.yrgo.event_service.dtos.CategoryResponseDTO;
 import se.yrgo.event_service.dtos.EventCreateDTO;
 import se.yrgo.event_service.dtos.EventResponseDTO;
+import se.yrgo.event_service.service.CategoryService;
 import se.yrgo.event_service.service.EventService;
 
 import java.util.List;
@@ -15,9 +18,11 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
+    private final CategoryService categoryService;
 
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, CategoryService categoryService) {
         this.eventService = eventService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping
@@ -47,10 +52,45 @@ public class EventController {
         return ResponseEntity.ok(updated);
     }
 
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/categories")
+    public List<CategoryResponseDTO> getAllCategories() {
+        return categoryService.getAllCategories();
+    }
+
+    @GetMapping("/categories/{id}")
+    public CategoryResponseDTO getCategory(@PathVariable Long id) {
+        return categoryService.getCategory(id);
+    }
+
+    @PostMapping("/categories")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryCreateDTO dto) {
+        CategoryResponseDTO response = categoryService.createCategory(dto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/categories/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
+            @PathVariable Long id,
+            @RequestBody CategoryCreateDTO dto
+    ) {
+        CategoryResponseDTO updated = categoryService.updateCategory(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/categories/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
 }
