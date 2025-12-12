@@ -17,26 +17,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
-
                         .requestMatchers("/api/events/**").hasRole("ADMIN")
-
+                        .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(withDefaults())
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin())
+                )
                 .httpBasic(withDefaults());
-
-        http.csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**")
-        );
-
-        http.headers(headers -> headers
-                .frameOptions(frameOptions -> frameOptions.sameOrigin())
-        );
 
         return http.build();
     }
 }
+
 
