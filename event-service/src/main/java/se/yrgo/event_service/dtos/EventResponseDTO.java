@@ -11,10 +11,12 @@ public class EventResponseDTO {
     private String category;
     private String artist;
     private int capacity;
+    private int availableTickets;
     private LocalDateTime eventDateAndTime;
     private LocalDateTime createdAt;
 
-    public EventResponseDTO() {}
+    public EventResponseDTO() {
+    }
 
     public EventResponseDTO(
             Long id,
@@ -25,6 +27,7 @@ public class EventResponseDTO {
             String category,
             String artist,
             int capacity,
+            int availableTickets,
             LocalDateTime eventDateAndTime,
             LocalDateTime createdAt) {
         this.id = id;
@@ -35,6 +38,7 @@ public class EventResponseDTO {
         this.category = category;
         this.artist = artist;
         this.capacity = capacity;
+        this.availableTickets = availableTickets;
         this.eventDateAndTime = eventDateAndTime;
         this.createdAt = createdAt;
     }
@@ -101,6 +105,14 @@ public class EventResponseDTO {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public int getAvailableTickets() {
+        return availableTickets;
+    }
+
+    public void setAvailableTickets(int availableTickets) {
+        this.availableTickets = availableTickets;
     }
 
     public LocalDateTime getEventDateAndTime() {

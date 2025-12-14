@@ -22,6 +22,7 @@ public class Event {
 
     private String artist;
     private int capacity;
+    private int availableTickets;
     private LocalDateTime eventDateAndTime;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -37,6 +38,7 @@ public class Event {
             Category category,
             String artist,
             int capacity,
+            int availableTickets,
             LocalDateTime eventDateAndTime) {
         this.eventId = eventId;
         this.name = name;
@@ -45,6 +47,7 @@ public class Event {
         this.category = category;
         this.artist = artist;
         this.capacity = capacity;
+        this.availableTickets = availableTickets;
         this.eventDateAndTime = eventDateAndTime;
     }
 
@@ -108,6 +111,10 @@ public class Event {
         this.capacity = capacity;
     }
 
+    public int getAvailableTickets() { return availableTickets; }
+
+    public void setAvailableTickets(int availableTickets) { this.availableTickets = availableTickets; }
+
     public LocalDateTime getEventDateAndTime() {
         return eventDateAndTime;
     }
@@ -156,6 +163,7 @@ public class Event {
                 ", categoryId=" + (category != null ? category.getCategoryId() : null) +
                 ", artist='" + artist + '\'' +
                 ", capacity=" + capacity +
+                ", availableTickets=" + availableTickets +
                 ", eventDateAndTime=" + eventDateAndTime +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
