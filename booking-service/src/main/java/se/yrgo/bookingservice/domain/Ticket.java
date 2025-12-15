@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +19,12 @@ public class Ticket {
 
     @ManyToOne
     private Booking booking;
+
+    @Builder
+    public Ticket(double price, Booking booking) {
+        this.price = price;
+        this.booking = booking;
+    }
 
     // Makes sure the entity gets a legit ID before persisting
     @PrePersist
