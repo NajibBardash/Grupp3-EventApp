@@ -8,9 +8,11 @@ import se.yrgo.event_service.domain.Category;
 import se.yrgo.event_service.domain.Event;
 import se.yrgo.event_service.dtos.EventCreateDTO;
 import se.yrgo.event_service.dtos.EventResponseDTO;
+import se.yrgo.event_service.messaging.EventMessageProducer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -18,10 +20,12 @@ public class EventServiceProdImpl implements EventService {
 
     private final EventDao eventDao;
     private final CategoryDao categoryDao;
+    private final EventMessageProducer eventMessageProducer;
 
-    public EventServiceProdImpl(EventDao eventDao, CategoryDao categoryDao) {
+    public EventServiceProdImpl(EventDao eventDao, CategoryDao categoryDao, EventMessageProducer eventMessageProducer) {
         this.eventDao = eventDao;
         this.categoryDao = categoryDao;
+        this.eventMessageProducer = eventMessageProducer;
     }
 
     @Override
@@ -50,14 +54,21 @@ public class EventServiceProdImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         event.setCategory(category);
 
-        return mapToResponse(event);
+        EventResponseDTO responseDTO = mapToResponse(event);
+        eventMessageProducer.sendEventUpdated(responseDTO.getEventId());
+
+
+        return responseDTO;
     }
 
 
     @Override
     @Transactional
     public void deleteEvent(Long id) {
+        Event event = eventDao.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
         eventDao.deleteById(id);
+
+        eventMessageProducer.sendEventDeleted(event.getEventId());
     }
 
     @Override
@@ -66,6 +77,15 @@ public class EventServiceProdImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
         return mapToResponse(event);
+    }
+
+    @Override
+    public EventResponseDTO getEventByEventId(String eventId) {
+        Optional<Event> event = eventDao.findByEventId(eventId);
+        if (event.isPresent()) {
+            return mapToResponse(event.get());
+        }
+        return null;
     }
 
     @Override

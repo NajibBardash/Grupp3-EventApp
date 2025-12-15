@@ -1,15 +1,21 @@
 meta {
   name: deleteEvent
   type: http
-  seq: 5
+  seq: 8
 }
 
 delete {
-  url: http://localhost:8080/api/events/1
+  url: http://localhost:8080/api/events/3
   body: none
-  auth: inherit
+  auth: basic
+}
+
+auth:basic {
+  username: admin
+  password: password
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }
