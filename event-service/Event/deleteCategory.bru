@@ -1,15 +1,21 @@
 meta {
   name: deleteCategory
   type: http
-  seq: 10
+  seq: 12
 }
 
 delete {
-  url: http://localhost:8080/api/events/categories/1
+  url: http://localhost:8080/api/events/categories/2
   body: none
-  auth: inherit
+  auth: basic
+}
+
+auth:basic {
+  username: admin
+  password: password
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

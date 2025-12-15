@@ -1,15 +1,34 @@
 meta {
   name: updateEvent
   type: http
-  seq: 4
+  seq: 5
 }
 
 put {
-  url: http://localhost:8080/api/events/1
-  body: none
-  auth: inherit
+  url: http://localhost:8081/api/events/5
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: admin
+  password: password
+}
+
+body:json {
+  {
+    "name": "AC/DC-avskedskonsert",
+    "description": "Rock n Roll all night!",
+    "location": "Ullevi",
+    "categoryId": "CTG-9408BAEC",
+    "artist": "AC/DC",
+    "capacity": 60000,
+    "availableTickets": 60000,
+    "eventDateAndTime": "2025-12-25T20:00:00"
+  }
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

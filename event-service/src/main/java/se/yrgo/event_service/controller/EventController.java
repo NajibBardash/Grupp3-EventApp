@@ -35,6 +35,11 @@ public class EventController {
         return eventService.getEventById(id);
     }
 
+    @GetMapping("/event/{eventId}")
+    public EventResponseDTO getEventById(@PathVariable String eventId) {
+        return eventService.getEventByEventId(eventId);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EventResponseDTO> createEvent(@RequestBody EventCreateDTO dto) {

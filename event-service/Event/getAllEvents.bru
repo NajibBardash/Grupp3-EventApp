@@ -1,15 +1,16 @@
 meta {
   name: getAllEvents
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
-  url: http://localhost:8080/api/events
+  url: http://localhost:8081/api/events
   body: none
   auth: inherit
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

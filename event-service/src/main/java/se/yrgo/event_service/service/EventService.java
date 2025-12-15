@@ -11,5 +11,6 @@ public interface EventService {
     EventResponseDTO updateEvent(Long id, EventCreateDTO dto);
     void deleteEvent(Long id);
     EventResponseDTO getEventById(Long id);
+    EventResponseDTO getEventByEventId(String eventId);
     List<EventResponseDTO> getAllEvents();
 }

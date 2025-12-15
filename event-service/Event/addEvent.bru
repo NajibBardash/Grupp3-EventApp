@@ -1,15 +1,34 @@
 meta {
   name: addEvent
   type: http
-  seq: 3
+  seq: 6
 }
 
 post {
   url: http://localhost:8080/api/events
-  body: none
-  auth: inherit
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: admin
+  password: password
+}
+
+body:json {
+  {
+    "name": "Tchajkovski: Svansjön",
+    "description": "Klassisk balett",
+    "location": "Göteborgsoperan",
+    "categoryId": "CTG-CDBD049A",
+    "artist": "Göteborgs Symfoniorkester",
+    "capacity": 5000,
+    "availableTickets": 5000,
+    "eventDateAndTime": "2025-12-25T20:00:00"
+  }
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

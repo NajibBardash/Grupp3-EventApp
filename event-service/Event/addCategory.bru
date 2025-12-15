@@ -1,15 +1,27 @@
 meta {
   name: addCategory
   type: http
-  seq: 8
+  seq: 10
 }
 
 post {
   url: http://localhost:8080/api/events/categories
-  body: none
-  auth: inherit
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: admin
+  password: password
+}
+
+body:json {
+  {
+    "type": "Balett"
+  }
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
 }
