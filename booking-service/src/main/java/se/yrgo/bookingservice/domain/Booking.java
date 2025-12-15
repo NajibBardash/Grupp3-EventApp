@@ -11,7 +11,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +25,18 @@ public class Booking {
     private List<Ticket> tickets;
 
     private boolean refundable;
+
+    /**
+     * Note that the constructor does not take a booking-id, and the builder does not allow it.
+     */
+    @Builder
+    public Booking(LocalDateTime dateOfBooking, String customerId, String eventId, List<Ticket> tickets, boolean refundable) {
+        this.dateOfBooking = dateOfBooking;
+        this.customerId = customerId;
+        this.eventId = eventId;
+        this.tickets = tickets;
+        this.refundable = refundable;
+    }
 
     // Makes sure the entity gets a legit ID before persisting
     @PrePersist

@@ -10,6 +10,7 @@ import se.yrgo.bookingservice.services.BookingServiceImpl;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/booking")
 public class BookingController {
     private final BookingServiceImpl bookingService;
 
@@ -17,7 +18,7 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @PostMapping("/booking")
+    @PostMapping
     public ResponseEntity<BookingResponseDTO> registerNewBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
         if (bookingRequestDTO != null) {
             System.out.println(bookingRequestDTO);
@@ -27,7 +28,7 @@ public class BookingController {
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("/booking/{bookingId}")
+    @GetMapping("/{bookingId}")
     public BookingResponseDTO getBooking(@PathVariable String bookingId) {
         if (bookingId != null) {
             return bookingService.getBookingById(bookingId);
@@ -35,7 +36,7 @@ public class BookingController {
         return null;
     }
 
-    @GetMapping("/bookings")
+    @GetMapping("")
     public List<BookingResponseDTO> getAllBookings() {
         return bookingService.getAllBookings();
     }

@@ -1,13 +1,11 @@
 package se.yrgo.bookingservice.external.event;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import se.yrgo.bookingservice.dto.ReserveTicketsDTO;
 
 @Component
 public class EventClient {
-    private RestClient restClient;
+    private final RestClient restClient;
 
     public EventClient() {
         this.restClient = RestClient.builder().baseUrl("http://localhost:8080").build();
@@ -16,7 +14,7 @@ public class EventClient {
     public void reserveTickets(ReserveTicketsDTO reserveTicketsDTO) {
         try {
             restClient.post()
-                    .uri("/reserve")
+                    .uri("/api/events/reserve")
                     .body(reserveTicketsDTO)
                     .retrieve()
                     .toBodilessEntity();

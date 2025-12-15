@@ -6,7 +6,9 @@ import se.yrgo.bookingservice.domain.Booking;
 import se.yrgo.bookingservice.domain.Ticket;
 import se.yrgo.bookingservice.dto.BookingRequestDTO;
 import se.yrgo.bookingservice.dto.BookingResponseDTO;
+import se.yrgo.bookingservice.dto.ReserveTicketsDTO;
 import se.yrgo.bookingservice.dto.TicketResponseDTO;
+import se.yrgo.bookingservice.external.event.EventClient;
 import se.yrgo.bookingservice.factory.TicketFactory;
 
 import java.time.LocalDateTime;
@@ -18,13 +20,27 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
+    private final EventClient eventClient;
 
     public BookingServiceImpl(BookingRepository bookingRepository) {
         this.bookingRepository = bookingRepository;
+        this.eventClient = new EventClient();
     }
 
     public BookingResponseDTO createBooking(BookingRequestDTO dto) {
+
+        ReserveTicketsDTO reserveTicketsDTO = ReserveTicketsDTO.builder()
+                .amount(dto.getNumberOfTickets())
+                .eventId(dto.getEventId())
+                .build();
+
+        if (!reserveTickets(reserveTicketsDTO)) {
+            System.err.println("EVENT FULL");
+            return null;
+        }
+
         List<Ticket> tickets = TicketFactory.createTickets(dto.getNumberOfTickets());
+
         Booking booking = Booking.builder()
                 .dateOfBooking(LocalDateTime.now(ZoneId.of("UTC")))
                 .eventId(dto.getEventId())
@@ -62,6 +78,15 @@ public class BookingServiceImpl implements BookingService {
 //    public BookingResponseDTO editBooking(BookingRequestDTO editDto) {
 //        Booking bookingToEdit = bookingRepository.findByBookingId(editDto.get)
 //    }
+
+    private void reserveTickets(ReserveTicketsDTO dto) {
+        try {
+            eventClient.reserveTickets(dto);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     private BookingResponseDTO mapToResponseDTO(Booking booking) {
         return new BookingResponseDTO(
