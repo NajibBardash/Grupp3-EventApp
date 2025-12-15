@@ -15,6 +15,10 @@ public interface BookingService {
     BookingResponseDTO getBookingById(String bookingId);
     List<BookingResponseDTO> getAllBookings();
     void deleteBooking(String bookingId);
-    BookingResponseDTO editBooking(String bookingId, BookingRequestDTO bookingRequestDTO);
     List<Ticket> getTicketsForBooking(String bookingId);
+
+    /**
+     * No real case were a booking should be edited
+     */
+    // BookingResponseDTO editBooking(String bookingId, BookingRequestDTO bookingRequestDTO);
 }
