@@ -47,7 +47,8 @@ public class BookingController {
 //    }
 
     @DeleteMapping("/{bookingId}")
-    public BookingResponseDTO deleteBooking(@PathVariable String bookingId) {
-        return null;
+    public ResponseEntity<Void> deleteBooking(@PathVariable String bookingId) {
+        bookingService.deleteBooking(bookingId);
+        return ResponseEntity.noContent().build();
     }
 }
