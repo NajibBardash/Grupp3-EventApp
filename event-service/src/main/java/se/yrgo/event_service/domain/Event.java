@@ -115,6 +115,10 @@ public class Event {
 
     public void setAvailableTickets(int availableTickets) { this.availableTickets = availableTickets; }
 
+    public void decreaseAvailableTickets(int decrease) {
+        this.availableTickets -= decrease;
+    }
+
     public LocalDateTime getEventDateAndTime() {
         return eventDateAndTime;
     }

@@ -8,6 +8,7 @@ import se.yrgo.event_service.domain.Category;
 import se.yrgo.event_service.domain.Event;
 import se.yrgo.event_service.dtos.EventCreateDTO;
 import se.yrgo.event_service.dtos.EventResponseDTO;
+import se.yrgo.event_service.dtos.ReserveTicketsDTO;
 import se.yrgo.event_service.messaging.EventMessageProducer;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class EventServiceProdImpl implements EventService {
         event.setLocation(dto.getLocation());
         event.setArtist(dto.getArtist());
         event.setCapacity(dto.getCapacity());
+        event.setAvailableTickets(dto.getAvailableTickets());
         event.setEventDateAndTime(dto.getEventDateAndTime());
 
         Category category = categoryDao.findByCategoryId(dto.getCategoryId())
@@ -59,6 +61,18 @@ public class EventServiceProdImpl implements EventService {
 
 
         return responseDTO;
+    }
+
+    @Override
+    @Transactional
+    public EventResponseDTO reserveEvent(ReserveTicketsDTO dto) {
+        Optional<Event> eventOpt = eventDao.findByEventId(dto.getEventId());
+        Event event = eventDao.findById(eventOpt.get().getId())
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        event.decreaseAvailableTickets(dto.getAmount());
+
+        return mapToResponse(event);
     }
 
 

@@ -4,10 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import se.yrgo.event_service.dtos.CategoryCreateDTO;
-import se.yrgo.event_service.dtos.CategoryResponseDTO;
-import se.yrgo.event_service.dtos.EventCreateDTO;
-import se.yrgo.event_service.dtos.EventResponseDTO;
+import se.yrgo.event_service.dtos.*;
 import se.yrgo.event_service.service.CategoryService;
 import se.yrgo.event_service.service.EventService;
 
@@ -57,6 +54,11 @@ public class EventController {
         return ResponseEntity.ok(updated);
     }
 
+    @PutMapping("/reserve")
+    public ResponseEntity<EventResponseDTO> reserveEvent(@RequestBody ReserveTicketsDTO dto) {
+        EventResponseDTO response = eventService.reserveEvent(dto);
+        return ResponseEntity.ok(response);
+    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
