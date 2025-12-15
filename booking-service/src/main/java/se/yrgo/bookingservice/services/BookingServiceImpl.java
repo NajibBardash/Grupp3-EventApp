@@ -8,6 +8,9 @@ import se.yrgo.bookingservice.dto.BookingRequestDTO;
 import se.yrgo.bookingservice.dto.BookingResponseDTO;
 import se.yrgo.bookingservice.dto.ReserveTicketsDTO;
 import se.yrgo.bookingservice.dto.TicketResponseDTO;
+import se.yrgo.bookingservice.exceptions.booking.BookingNotFoundException;
+import se.yrgo.bookingservice.exceptions.event.EventNotFoundException;
+import se.yrgo.bookingservice.exceptions.event.NoTicketsAvailableException;
 import se.yrgo.bookingservice.external.event.EventClient;
 import se.yrgo.bookingservice.factory.TicketFactory;
 
@@ -34,9 +37,12 @@ public class BookingServiceImpl implements BookingService {
                 .eventId(dto.getEventId())
                 .build();
 
-        if (!reserveTickets(reserveTicketsDTO)) {
-            System.err.println("EVENT FULL");
-            return null;
+        try {
+            eventClient.reserveTickets(reserveTicketsDTO);
+        } catch (EventNotFoundException e) {
+            throw new EventNotFoundException("Could not find event with id: " + dto.getEventId());
+        } catch (NoTicketsAvailableException e) {
+            throw new NoTicketsAvailableException("No tickets available for event: " + dto.getEventId());
         }
 
         List<Ticket> tickets = TicketFactory.createTickets(dto.getNumberOfTickets());
@@ -56,7 +62,16 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDTO getBookingById(String bookingId) {
-        return mapToResponseDTO(bookingRepository.findByBookingId(bookingId));
+        if (bookingId == null) {
+            throw new IllegalArgumentException("Booking id cannot be null");
+        }
+
+        Booking booking = bookingRepository.findByBookingId(bookingId);
+
+        if (booking == null) {
+            throw new BookingNotFoundException("Could not find booking with id: " + bookingId);
+        }
+        return mapToResponseDTO(booking);
     }
 
     @Override
@@ -71,13 +86,26 @@ public class BookingServiceImpl implements BookingService {
         Booking bookingToDelete = bookingRepository.findByBookingId(bookingId);
         if (bookingToDelete != null) {
             bookingRepository.delete(bookingToDelete);
+        } else {
+            throw new BookingNotFoundException("Could not find booking with id: " + bookingId);
         }
     }
 
-//    @Override
-//    public BookingResponseDTO editBooking(BookingRequestDTO editDto) {
-//        Booking bookingToEdit = bookingRepository.findByBookingId(editDto.get)
-//    }
+    @Override
+    public BookingResponseDTO editBooking(String bookingId, BookingRequestDTO bookingRequestDTO) {
+        return null;
+
+    }
+
+    @Override
+    public List<Ticket> getTicketsForBooking(String bookingId) {
+        if (bookingId != null) {
+                return bookingRepository.findByBookingId(bookingId).getTickets();
+        } else {
+            throw new IllegalArgumentException("bookingId is null");
+        }
+    }
+
 
     private void reserveTickets(ReserveTicketsDTO dto) {
         try {

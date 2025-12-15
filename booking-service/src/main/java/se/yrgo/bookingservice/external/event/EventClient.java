@@ -1,7 +1,11 @@
 package se.yrgo.bookingservice.external.event;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 import se.yrgo.bookingservice.dto.ReserveTicketsDTO;
+import se.yrgo.bookingservice.exceptions.event.EventNotFoundException;
+import se.yrgo.bookingservice.exceptions.event.NoTicketsAvailableException;
 
 @Component
 public class EventClient {
@@ -18,8 +22,16 @@ public class EventClient {
                     .body(reserveTicketsDTO)
                     .retrieve()
                     .toBodilessEntity();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (RestClientResponseException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                throw new EventNotFoundException(reserveTicketsDTO.getEventId());
+            }
+            else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                throw new NoTicketsAvailableException(reserveTicketsDTO.getEventId());
+            }
+            else {
+                throw e;
+            }
         }
     }
 }

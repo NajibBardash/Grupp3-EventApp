@@ -36,8 +36,18 @@ public class BookingController {
         return null;
     }
 
-    @GetMapping("")
+    @GetMapping
     public List<BookingResponseDTO> getAllBookings() {
         return bookingService.getAllBookings();
+    }
+
+    @PutMapping("/{bookingId}")
+    public BookingResponseDTO updateBooking(@PathVariable String bookingId, @RequestBody BookingRequestDTO bookingRequestDTO) {
+        return null;
+    }
+
+    @DeleteMapping("/{bookingId}")
+    public BookingResponseDTO deleteBooking(@PathVariable String bookingId) {
+        return null;
     }
 }
