@@ -41,10 +41,10 @@ public class BookingController {
         return bookingService.getAllBookings();
     }
 
-    @PutMapping("/{bookingId}")
-    public BookingResponseDTO updateBooking(@PathVariable String bookingId, @RequestBody BookingRequestDTO bookingRequestDTO) {
-        return null;
-    }
+//    @PutMapping("/{bookingId}")
+//    public BookingResponseDTO updateBooking(@PathVariable String bookingId, @RequestBody BookingRequestDTO bookingRequestDTO) {
+//        return null;
+//    }
 
     @DeleteMapping("/{bookingId}")
     public BookingResponseDTO deleteBooking(@PathVariable String bookingId) {
