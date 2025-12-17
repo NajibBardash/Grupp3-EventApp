@@ -10,16 +10,29 @@ import {
   CircularProgress,
   Box,
   Chip,
+  Button,
+  Snackbar,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import BookEventModal from "../components/BookEventModal";
+import { useAuth } from "../context/AuthContext";
 
 function Events() {
   const [events, setEvents] = useState<EventDTO[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState<EventDTO | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const loadEvents = () => {
+    setLoading(true);
     getAllEvents()
       .then((data) => {
         setEvents(data);
@@ -29,10 +42,16 @@ function Events() {
         setError("Kunde inte hämta events");
         setLoading(false);
       });
-  }, []);
+  };
 
   const handleEventClick = (event: EventDTO) => {
-    console.log("Event clicked:", event);
+    setSelectedEvent(event);
+    setModalOpen(true);
+  };
+
+  const handleBookingSuccess = () => {
+    setSuccessMessage("Booking successful! Check 'My Bookings' to see details.");
+    loadEvents();
   };
 
   if (loading) {
@@ -79,7 +98,6 @@ function Events() {
                   boxShadow: 6,
                 },
               }}
-              onClick={() => handleEventClick(event)}
             >
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography gutterBottom variant="h5" component="h2">
@@ -104,18 +122,45 @@ function Events() {
                   <strong>Date:</strong>{" "}
                   {new Date(event.eventDateAndTime).toLocaleString()}
                 </Typography>
-                <Box sx={{ mt: 2 }}>
+                <Box sx={{ mt: 2, mb: 2 }}>
                   <Chip
                     label={`${event.availableTickets} / ${event.capacity} tickets available`}
                     color={event.availableTickets > 0 ? "success" : "error"}
                     size="small"
                   />
                 </Box>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEventClick(event);
+                  }}
+                  disabled={event.availableTickets === 0}
+                >
+                  {event.availableTickets > 0
+                    ? "Book Tickets"
+                    : "Sold Out"}
+                </Button>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
+
+      <BookEventModal
+        event={selectedEvent}
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onBookingSuccess={handleBookingSuccess}
+      />
+
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={6000}
+        onClose={() => setSuccessMessage("")}
+        message={successMessage}
+      />
     </Container>
   );
 }
