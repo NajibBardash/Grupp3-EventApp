@@ -18,7 +18,7 @@ public class EventQueryClient {
 
     public void handleReservation(TicketReservationDetailsDTO ticketReservationDetailsDTO, EventRequestMethod method) {
         restClient.put()
-                .uri("/api/event/" + method.getValue())
+                .uri("/api/events/" + method.getValue())
                 .body(ticketReservationDetailsDTO)
                 .retrieve()
                 .onStatus(
