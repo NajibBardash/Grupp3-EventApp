@@ -35,4 +35,8 @@ public class EventQueryClient {
             }
         }
     }
+
+    public void clearReservation(ReserveTicketsDTO reserveTicketsDTO) {
+        System.out.println("NOT IMPLEMENTED");
+    }
 }
