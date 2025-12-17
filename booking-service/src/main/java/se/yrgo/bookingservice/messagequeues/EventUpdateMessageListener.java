@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class EventUpdateMessageListener {
     @JmsListener(destination="eventUpdateQueue")
 
-    public void processMessage(String placeholder) {
-        System.out.println(placeholder);
+    public void processMessage(EventChangeMessage message) {
+        System.out.println("Updated event: " + message.eventId() + ": " + message.message());
     }
 }

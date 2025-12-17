@@ -25,13 +25,13 @@ public class EventClient {
                     .toBodilessEntity();
         } catch (RestClientResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new EventNotFoundException(reserveTicketsDTO.getEventId());
+                throw new EventNotFoundException(reserveTicketsDTO.getEventId(), e.getCause());
             }
             else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                throw new NoTicketsAvailableException(reserveTicketsDTO.getEventId());
+                throw new NoTicketsAvailableException(reserveTicketsDTO.getEventId(), e.getCause());
             }
             else if (e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                throw new EventServiceUnavailableException(e.getMessage());
+                throw new EventServiceUnavailableException(e.getMessage(), e.getCause());
             }
         }
     }
