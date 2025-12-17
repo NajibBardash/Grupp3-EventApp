@@ -31,14 +31,11 @@ public class CategoryServiceProdImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryResponseDTO updateCategory(Long id, CategoryCreateDTO dto) {
-        try {
-            Category toBeUpdated = categoryDao.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
-            toBeUpdated.setType(dto.getType());
-            return mapToResponse(toBeUpdated);
-        }
-        catch (CategoryNotFoundException e) {
-            throw new CategoryNotFoundException("Category was not updated.");
-        }
+        Category toBeUpdated = categoryDao.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id " + id));
+        toBeUpdated.setType(dto.getType());
+
+        return mapToResponse(toBeUpdated);
     }
 
     @Override

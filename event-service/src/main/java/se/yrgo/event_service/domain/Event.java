@@ -60,10 +60,6 @@ public class Event {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
     public String getName() {
         return name;
     }
@@ -130,6 +126,16 @@ public class Event {
         }
     }
 
+    public void increaseAvailableTickets(int increase) {
+        if (increase > this.availableTickets) {
+            throw new InsufficientTicketsException("Can't return more tickets than there are tickets booked.");
+        }
+        else if (increase <= 0) {
+            throw new IllegalArgumentException("You can't return less than 1 ticket.");
+        }
+        this.availableTickets += increase;
+    }
+
     public LocalDateTime getEventDateAndTime() {
         return eventDateAndTime;
     }
@@ -140,10 +146,6 @@ public class Event {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     @PrePersist

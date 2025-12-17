@@ -49,51 +49,26 @@ public class EventCreateDTO {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getLocation() {
         return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
     public String getArtist() {
         return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
     }
 
     public int getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
     public int getAvailableTickets() { return availableTickets; }
-
-    public void setAvailableTickets(int availableTickets) { this.availableTickets = availableTickets; }
 
     public LocalDateTime getEventDateAndTime() {
         return eventDateAndTime;
     }
 
-    public void setEventDateAndTime(LocalDateTime eventDateAndTime) {
-        this.eventDateAndTime = eventDateAndTime;
-    }
 }
