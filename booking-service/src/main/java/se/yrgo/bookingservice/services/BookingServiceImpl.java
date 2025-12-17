@@ -7,7 +7,7 @@ import se.yrgo.bookingservice.domain.Booking;
 import se.yrgo.bookingservice.domain.Ticket;
 import se.yrgo.bookingservice.dto.BookingRequestDTO;
 import se.yrgo.bookingservice.dto.BookingResponseDTO;
-import se.yrgo.bookingservice.dto.ReserveTicketsDTO;
+import se.yrgo.bookingservice.dto.TicketReservationDetailsDTO;
 import se.yrgo.bookingservice.dto.TicketResponseDTO;
 import se.yrgo.bookingservice.exceptions.booking.BookingFailedException;
 import se.yrgo.bookingservice.exceptions.booking.BookingNotFoundException;
@@ -16,6 +16,7 @@ import se.yrgo.bookingservice.exceptions.event.EventServiceUnavailableException;
 import se.yrgo.bookingservice.exceptions.event.NoTicketsAvailableException;
 import se.yrgo.bookingservice.integrations.event.EventQueryClient;
 import se.yrgo.bookingservice.factory.TicketFactory;
+import se.yrgo.bookingservice.integrations.event.EventQueryMethod;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -36,7 +37,9 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponseDTO createBooking(BookingRequestDTO dto) {
 
-        reserveTickets(dto);
+        TicketReservationDetailsDTO reservationDetails = getReserveTicketsDTO(dto);
+
+        reserveTickets(reservationDetails);
 
         boolean paymentSuccess = true;
 
@@ -58,11 +61,10 @@ public class BookingServiceImpl implements BookingService {
 
             return mapToResponseDTO(savedBooking);
         } else {
-            clearTicketReservation(null);
+            clearTicketReservation(reservationDetails);
             System.out.println("failed payment");
+            return null;
         }
-
-        return null;
     }
 
 
@@ -114,29 +116,30 @@ public class BookingServiceImpl implements BookingService {
         ).toList();
     }
 
-    private void reserveTickets(BookingRequestDTO dto) {
-
-        ReserveTicketsDTO reserveTicketsDTO = ReserveTicketsDTO.builder()
-                .amount(dto.getNumberOfTickets())
-                .eventId(dto.getEventId())
+    private static TicketReservationDetailsDTO getReserveTicketsDTO(BookingRequestDTO bookingDetails) {
+        return TicketReservationDetailsDTO.builder()
+                .amount(bookingDetails.getNumberOfTickets())
+                .eventId(bookingDetails.getEventId())
                 .build();
+    }
 
+    private void reserveTickets(TicketReservationDetailsDTO reservationDetails) {
         try {
-            eventQueryClient.reserveTickets(reserveTicketsDTO);
+            eventQueryClient.handleTicketReservation(reservationDetails, EventQueryMethod.RESERVE);
         }  catch (EventNotFoundException
                   | NoTicketsAvailableException
                   | EventServiceUnavailableException e) {
             throw new BookingFailedException("Failed to reserve tickets for event "
-                    + reserveTicketsDTO.getEventId()
+                    + reservationDetails.getEventId()
                     + ": "
                     + e.getMessage(),
                     e);
         }
     }
 
-    private void clearTicketReservation(BookingRequestDTO dto) {
-        ReserveTicketsDTO reserveTicketsDTO = new ReserveTicketsDTO();
-        eventQueryClient.clearReservation(reserveTicketsDTO);
+
+    private void clearTicketReservation(TicketReservationDetailsDTO reservationDetails) {
+        eventQueryClient.handleTicketReservation(reservationDetails, EventQueryMethod.CANCEL);
     }
 
     private BookingResponseDTO mapToResponseDTO(Booking booking) {

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReserveTicketsDTO {
+public class TicketReservationDetailsDTO {
     private int amount;
     private String eventId;
 }
