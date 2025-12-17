@@ -14,7 +14,7 @@ import se.yrgo.bookingservice.exceptions.booking.BookingNotFoundException;
 import se.yrgo.bookingservice.exceptions.event.EventNotFoundException;
 import se.yrgo.bookingservice.exceptions.event.EventServiceUnavailableException;
 import se.yrgo.bookingservice.exceptions.event.NoTicketsAvailableException;
-import se.yrgo.bookingservice.integrations.event.EventClient;
+import se.yrgo.bookingservice.integrations.event.EventQueryClient;
 import se.yrgo.bookingservice.factory.TicketFactory;
 
 import java.time.LocalDateTime;
@@ -26,11 +26,11 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-    private final EventClient eventClient;
+    private final EventQueryClient eventQueryClient;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, EventClient eventClient) {
+    public BookingServiceImpl(BookingRepository bookingRepository, EventQueryClient eventQueryClient) {
         this.bookingRepository = bookingRepository;
-        this.eventClient = eventClient;
+        this.eventQueryClient = eventQueryClient;
     }
 
     @Transactional
@@ -96,6 +96,13 @@ public class BookingServiceImpl implements BookingService {
         return booking.getTickets();
     }
 
+    @Override
+    public List<BookingResponseDTO> getBookingByEventId(String eventId) {
+        return bookingRepository.findByEventId(eventId).stream().map(
+                this::mapToResponseDTO
+        ).toList();
+    }
+
     private void reserveTickets(BookingRequestDTO dto) {
 
         ReserveTicketsDTO reserveTicketsDTO = ReserveTicketsDTO.builder()
@@ -104,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
                 .build();
 
         try {
-            eventClient.reserveTickets(reserveTicketsDTO);
+            eventQueryClient.reserveTickets(reserveTicketsDTO);
         }  catch (EventNotFoundException
                   | NoTicketsAvailableException
                   | EventServiceUnavailableException e) {

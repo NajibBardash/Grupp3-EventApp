@@ -9,11 +9,11 @@ import se.yrgo.bookingservice.exceptions.event.EventServiceUnavailableException;
 import se.yrgo.bookingservice.exceptions.event.NoTicketsAvailableException;
 
 @Component
-public class EventClient {
+public class EventQueryClient {
     private final RestClient restClient;
 
-    public EventClient() {
-        this.restClient = RestClient.builder().baseUrl("http://localhost:8080").build();
+    public EventQueryClient() {
+        this.restClient = RestClient.builder().baseUrl("http://localhost:8081").build();
     }
 
     public void reserveTickets(ReserveTicketsDTO reserveTicketsDTO) {
@@ -25,13 +25,13 @@ public class EventClient {
                     .toBodilessEntity();
         } catch (RestClientResponseException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new EventNotFoundException(reserveTicketsDTO.getEventId());
+                throw new EventNotFoundException(reserveTicketsDTO.getEventId(), e.getCause());
             }
             else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                throw new NoTicketsAvailableException(reserveTicketsDTO.getEventId());
+                throw new NoTicketsAvailableException(reserveTicketsDTO.getEventId(), e.getCause());
             }
             else if (e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                throw new EventServiceUnavailableException(e.getMessage());
+                throw new EventServiceUnavailableException(e.getMessage(), e.getCause());
             }
         }
     }
