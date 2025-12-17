@@ -3,7 +3,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
-import se.yrgo.bookingservice.dto.ReserveTicketsDTO;
+import se.yrgo.bookingservice.dto.TicketReservationDetailsDTO;
 import se.yrgo.bookingservice.exceptions.event.EventNotFoundException;
 import se.yrgo.bookingservice.exceptions.event.EventServiceUnavailableException;
 import se.yrgo.bookingservice.exceptions.event.NoTicketsAvailableException;
@@ -16,27 +16,35 @@ public class EventQueryClient {
         this.restClient = RestClient.builder().baseUrl("http://localhost:8081").build();
     }
 
-    public void reserveTickets(ReserveTicketsDTO reserveTicketsDTO) {
-        try {
-            restClient.post()
-                    .uri("/api/event/reserve")
-                    .body(reserveTicketsDTO)
-                    .retrieve()
-                    .toBodilessEntity();
-        } catch (RestClientResponseException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new EventNotFoundException(reserveTicketsDTO.getEventId(), e.getCause());
-            }
-            else if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                throw new NoTicketsAvailableException(reserveTicketsDTO.getEventId(), e.getCause());
-            }
-            else if (e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                throw new EventServiceUnavailableException(e.getMessage(), e.getCause());
-            }
-        }
-    }
-
-    public void clearReservation(ReserveTicketsDTO reserveTicketsDTO) {
-        System.out.println("NOT IMPLEMENTED");
+    public void handleReservation(TicketReservationDetailsDTO ticketReservationDetailsDTO, EventRequestMethod method) {
+        restClient.put()
+                .uri("/api/event/" + method.getValue())
+                .body(ticketReservationDetailsDTO)
+                .retrieve()
+                .onStatus(
+                        status -> status == HttpStatus.NOT_FOUND,
+                        (req, res) -> {
+                            throw new EventNotFoundException(
+                                    "Event with id " + ticketReservationDetailsDTO.getEventId() + " not found"
+                            );
+                        }
+                )
+                .onStatus(
+                        status -> status == HttpStatus.BAD_REQUEST,
+                        (req, res) -> {
+                            throw new NoTicketsAvailableException(
+                                    "Event " + ticketReservationDetailsDTO.getEventId() + " has no tickets available"
+                            );
+                        }
+                )
+                .onStatus(
+                        status -> status == HttpStatus.INTERNAL_SERVER_ERROR,
+                        (req, res) -> {
+                            throw new EventServiceUnavailableException(
+                                    "Event service unavailable"
+                            );
+                        }
+                )
+                .toBodilessEntity();
     }
 }
