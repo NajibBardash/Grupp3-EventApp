@@ -71,7 +71,7 @@ public class EventServiceProdImpl implements EventService {
             throw new EventNotFoundException("Event not found with id " + dto.eventId());
         }
 
-        event.decreaseAvailableTickets(dto.amount()); // kan kasta InsufficientTicketsException
+        event.decreaseAvailableTickets(dto.amount());
         return mapToResponse(event);
     }
 
