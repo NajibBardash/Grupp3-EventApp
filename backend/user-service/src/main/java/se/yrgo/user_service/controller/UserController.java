@@ -1,33 +1,138 @@
 package se.yrgo.user_service.controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+import se.yrgo.user_service.data.UserDao;
+import se.yrgo.user_service.domain.User;
+import se.yrgo.user_service.dtos.UserCreateDTO;
+import se.yrgo.user_service.dtos.UserResponseDTO;
 
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.client.RestClient;
-import se.yrgo.user_service.data.UserRepository;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@Controller
+
+@RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    private UserRepository data;
-    private final RestClient restClient;
-    private LoadBalancerClient balancer;
+    private final UserDao userData;
+    private Set<User> users = new HashSet<>();
+    private PasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository data, RestClient.Builder restClientBuilder, LoadBalancerClient balancer) {
-        this.data = data;
-        this.restClient = restClientBuilder.build();
-        this.balancer = balancer;
+    public UserController(UserDao userData ) {
+        this.userData = userData;
+
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ResponseEntity<UserResponseDTO> register(@RequestBody UserCreateDTO reg_dto) {
+        User user = new User();
+        user.setEmail(reg_dto.getEmail());
+        user.setPassword(passwordEncoder.encode(reg_dto.getPassword()));
+        userData.save(user);
+        users.add(user);
+        UserResponseDTO registerDTO = convertToDTO(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(registerDTO);
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseEntity<UserResponseDTO> login(@RequestBody UserCreateDTO loginData) {
+        return userData.getUserByEmail(loginData.getEmail())
+                .filter(user -> passwordEncoder.matches(loginData.getPassword(), user.getPassword()))
+                .map(this::convertToDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
+
+    @RequestMapping(value = "/create-user", method = RequestMethod.POST)
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserCreateDTO create_dto) {
+        User user = new User();
+        user.setEmail(create_dto.getEmail());
+        user.setPassword(passwordEncoder.encode(create_dto.getPassword()));
+        userData.save(user);
+        UserResponseDTO createDTO = convertToDTO(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createDTO);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteUserById(@PathVariable long id) {
+        if (userData.existsById(id)) {
+            userData.deleteUserById(id);
+            users.removeIf(user -> user.getId().equals(id));
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 
-    // TODO: Function: Create User
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public ResponseEntity<List<UserResponseDTO>> listAllUsers() {
+        try {
+            List<User> users = userData.listAllUsers();
+            if (users.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            List<UserResponseDTO> responseList = users.stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(responseList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
-    // TODO: Function: Delete User
+    @RequestMapping(value = "/{customerId}", method = RequestMethod.GET)
+    public ResponseEntity<UserResponseDTO> getUserByCustomerId(@PathVariable String customerId) {
+        Optional<User> userOpt = users.stream().filter
+                (user -> user.getCustomerId().equals(customerId)).findFirst();
 
-    // TODO: Function: List All Users.
+        if (!userOpt.isPresent()) {
+            userOpt = userData.getUserByCustomerId(customerId);
+        }
+        return userOpt.map(this::convertToDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 
-    // TODO: Function: Show User By customerId
+    }
 
-    // TODO: Function: Show User By Name
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
+    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
+        Optional<User> userOpt = users.stream().filter
+                (user -> user.getName().equals(username)).findFirst();
+        if (!userOpt.isPresent()) {
+            userOpt = userData.getUserByUsername(username);
+        }
+        return userOpt.map(this::convertToDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @RequestMapping(value = "/email/{email}", method = RequestMethod.GET)
+    public ResponseEntity<UserResponseDTO> getUserByEmail(@PathVariable String email) {
+        Optional<User> userOpt = users.stream().filter
+                (user -> user.getEmail().equals(email)).findFirst();
+        if (!userOpt.isPresent()) {
+            userOpt = userData.getUserByEmail(email);
+        }
+        return userOpt.map(this::convertToDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+
+    }
+
+    private UserResponseDTO convertToDTO(User user) {
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        return dto;
+    }
+
+    // TODO:  Add and implement
+//    public void addUser (Booking booking) {
+//        this.bookings.add(booking);
+//        booking.setUser(this);
+//    }
+//    public void removeUser (Booking booking) {
+//        this.bookings.remove(booking);
+//        booking.setUser(null);
+//    }
+
 }
+
+
+
