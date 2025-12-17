@@ -58,11 +58,9 @@ public class BookingServiceImpl implements BookingService {
 
             return mapToResponseDTO(savedBooking);
         } else {
-            clearTicketReservation(null);
-            System.out.println("failed payment");
+            clearTicketReservation(dto);
+            throw new BookingFailedException("Payment failed!");
         }
-
-        return null;
     }
 
 
