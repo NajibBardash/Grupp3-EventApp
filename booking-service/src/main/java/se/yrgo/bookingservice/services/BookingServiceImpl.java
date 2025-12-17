@@ -36,22 +36,33 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponseDTO createBooking(BookingRequestDTO dto) {
 
-        // TODO exception handling chaos here please look over this!!!!
         reserveTickets(dto);
 
-        List<Ticket> tickets = TicketFactory.createTickets(dto.getNumberOfTickets());
+        boolean paymentSuccess = true;
 
-        Booking booking = Booking.builder()
-                .dateOfBooking(LocalDateTime.now(ZoneId.of("UTC")))
-                .eventId(dto.getEventId())
-                .customerId(dto.getCustomerId())
-                .tickets(tickets)
-                .refundable(dto.isRefundable())
-                .build();
+        if (paymentSuccess) {
+            Booking booking = Booking.builder()
+                    .dateOfBooking(LocalDateTime.now(ZoneId.of("UTC")))
+                    .eventId(dto.getEventId())
+                    .customerId(dto.getCustomerId())
+                    .refundable(dto.isRefundable())
+                    .build();
 
-        Booking savedBooking = bookingRepository.save(booking);
+            List<Ticket> tickets = TicketFactory.createTickets(
+                    dto.getNumberOfTickets(),
+                    booking);
 
-        return mapToResponseDTO(savedBooking);
+            booking.setTickets(tickets);
+
+            Booking savedBooking = bookingRepository.save(booking);
+
+            return mapToResponseDTO(savedBooking);
+        } else {
+            clearTicketReservation(null);
+            System.out.println("failed payment");
+        }
+
+        return null;
     }
 
 
@@ -121,7 +132,11 @@ public class BookingServiceImpl implements BookingService {
                     + e.getMessage(),
                     e);
         }
+    }
 
+    private void clearTicketReservation(BookingRequestDTO dto) {
+        ReserveTicketsDTO reserveTicketsDTO = new ReserveTicketsDTO();
+        eventQueryClient.clearReservation(reserveTicketsDTO);
     }
 
     private BookingResponseDTO mapToResponseDTO(Booking booking) {
