@@ -123,11 +123,7 @@ public class BookingServiceImpl implements BookingService {
         }  catch (EventNotFoundException
                   | NoTicketsAvailableException
                   | EventServiceUnavailableException e) {
-            throw new BookingFailedException("Failed to reserve tickets for event "
-                    + reservationDetails.getEventId()
-                    + ": "
-                    + e.getMessage(),
-                    e);
+            throw new BookingFailedException(e.getMessage());
         }
     }
 

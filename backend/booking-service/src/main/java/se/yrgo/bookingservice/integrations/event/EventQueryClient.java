@@ -18,7 +18,7 @@ public class EventQueryClient {
 
     public void handleReservation(TicketReservationDetailsDTO ticketReservationDetailsDTO, EventRequestMethod method) {
         restClient.put()
-                .uri("/api/event/" + method.getValue())
+                .uri("/api/events/" + method.getValue())
                 .body(ticketReservationDetailsDTO)
                 .retrieve()
                 .onStatus(
@@ -33,7 +33,7 @@ public class EventQueryClient {
                         status -> status == HttpStatus.BAD_REQUEST,
                         (req, res) -> {
                             throw new NoTicketsAvailableException(
-                                    "Event " + ticketReservationDetailsDTO.getEventId() + " has no tickets available"
+                                    "No available tickets for event with id " + ticketReservationDetailsDTO.getEventId()
                             );
                         }
                 )
