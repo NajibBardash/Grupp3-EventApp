@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.yrgo.bookingservice.dto.BookingRequestDTO;
 import se.yrgo.bookingservice.dto.BookingResponseDTO;
+import se.yrgo.bookingservice.exceptions.booking.BookingFailedException;
 import se.yrgo.bookingservice.services.BookingServiceImpl;
 
 import java.util.List;
@@ -19,13 +20,15 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<BookingResponseDTO> registerNewBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
-        if (bookingRequestDTO != null) {
-            System.out.println(bookingRequestDTO);
+    public ResponseEntity<String> registerNewBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
+
+        try {
             BookingResponseDTO created =  bookingService.createBooking(bookingRequestDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Booking successfully created: " + created.getBookingId() );
+        } catch (BookingFailedException e) {
+            return ResponseEntity.badRequest().body("Failed to create booking: " + e.getMessage());
         }
-        return ResponseEntity.badRequest().build();
+
     }
 
     @GetMapping("/{bookingId}")
