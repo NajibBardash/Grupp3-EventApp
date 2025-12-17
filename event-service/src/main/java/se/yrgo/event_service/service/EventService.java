@@ -11,6 +11,7 @@ public interface EventService {
     EventResponseDTO createEvent(EventCreateDTO eventCreateDTO);
     EventResponseDTO updateEvent(Long id, EventCreateDTO dto);
     EventResponseDTO reserveEvent(ReserveTicketsDTO dto);
+    void cancelBooking(ReserveTicketsDTO dto);
     void deleteEvent(Long id);
     EventResponseDTO getEventById(Long id);
     EventResponseDTO getEventByEventId(String eventId);

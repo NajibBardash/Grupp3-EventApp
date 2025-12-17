@@ -12,7 +12,6 @@ import se.yrgo.event_service.service.CategoryService;
 import se.yrgo.event_service.service.EventService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/events")
@@ -32,17 +31,23 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public EventResponseDTO getEvent(@PathVariable Long id) {
-        return eventService.getEventById(id);
+    public ResponseEntity<EventResponseDTO> getEvent(@PathVariable Long id) {
+        try {
+            EventResponseDTO response = eventService.getEventById(id);
+            return ResponseEntity.ok(response);
+        }
+        catch (EventNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/event/{eventId}")
-    public EventResponseDTO getEventById(@PathVariable String eventId) {
+    public ResponseEntity<EventResponseDTO> getEventById(@PathVariable String eventId) {
         try {
-            return eventService.getEventByEventId(eventId);
+            EventResponseDTO response = eventService.getEventByEventId(eventId);
+            return ResponseEntity.ok(response);
         } catch (EventNotFoundException e) {
-            System.out.println(e.getMessage());
-            return null;
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -73,9 +78,22 @@ public class EventController {
             EventResponseDTO response = eventService.reserveEvent(dto);
             return ResponseEntity.ok(response);
 
-        } catch (NoSuchElementException ne) {
+        } catch (EventNotFoundException ex) {
             return ResponseEntity.notFound().build();
-        } catch (InsufficientTicketsException ie) {
+        } catch (InsufficientTicketsException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/cancel")
+    public ResponseEntity<Void> cancelBooking(@RequestBody ReserveTicketsDTO dto) {
+        try {
+            eventService.cancelBooking(dto);
+            return ResponseEntity.noContent().build();
+
+        } catch (EventNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (InsufficientTicketsException e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -98,12 +116,12 @@ public class EventController {
     }
 
     @GetMapping("/categories/{id}")
-    public CategoryResponseDTO getCategory(@PathVariable Long id) {
+    public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable Long id) {
         try {
-            return categoryService.getCategory(id);
+            CategoryResponseDTO response = categoryService.getCategory(id);
+            return ResponseEntity.ok(response);
         } catch (CategoryNotFoundException e) {
-            System.out.println(e.getMessage());
-            return null;
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -123,8 +141,7 @@ public class EventController {
         try {
             CategoryResponseDTO updated = categoryService.updateCategory(id, dto);
             return ResponseEntity.ok(updated);
-        }
-        catch (CategoryNotFoundException e) {
+        } catch (CategoryNotFoundException e) {
             System.out.println(e.getMessage());
             return ResponseEntity.notFound().build();
         }
