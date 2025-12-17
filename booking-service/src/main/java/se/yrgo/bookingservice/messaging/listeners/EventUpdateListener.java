@@ -26,10 +26,12 @@ public class EventUpdateListener {
                 .map(BookingResponseDTO::getCustomerId)
                 .toList();
 
-        // Create a DTO with data for notificationService to use.
-        NotificationMessage notice = new NotificationMessage(
-                affectedUsers, message
-        );
+
+
+//        // Create a DTO with data for notificationService to use.
+//        NotificationMessage notice = new NotificationMessage(
+//                affectedUsers, message
+//        );
 
     }
 }
