@@ -1,15 +1,12 @@
 package se.yrgo.event_service.messaging;
 
-import se.yrgo.event_service.dtos.EventResponseDTO;
-
 import java.io.Serializable;
 
 public class EventChangeMessage implements Serializable {
     private String eventId;
     private String action;
 
-    public EventChangeMessage() {
-    }
+    public EventChangeMessage() {}
 
     public EventChangeMessage(String eventId, String action) {
         this.eventId = eventId;

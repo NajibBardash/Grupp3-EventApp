@@ -1,0 +1,23 @@
+meta {
+  name: reserveEvent
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:8081/api/events/reserve
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "amount": 2,
+    "eventID": "EVT-3E99CA28"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

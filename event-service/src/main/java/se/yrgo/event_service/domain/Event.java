@@ -1,6 +1,7 @@
 package se.yrgo.event_service.domain;
 
 import jakarta.persistence.*;
+import se.yrgo.event_service.exceptions.InsufficientTicketsException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -111,9 +112,23 @@ public class Event {
         this.capacity = capacity;
     }
 
-    public int getAvailableTickets() { return availableTickets; }
+    public int getAvailableTickets() {
+        return availableTickets;
+    }
 
-    public void setAvailableTickets(int availableTickets) { this.availableTickets = availableTickets; }
+    public void setAvailableTickets(int availableTickets) {
+        this.availableTickets = availableTickets;
+    }
+
+    public void decreaseAvailableTickets(int decrease) {
+        if (decrease > this.availableTickets) {
+            throw new InsufficientTicketsException("There are fewer tickets available than you have requested.");
+        } else if (decrease <= 0) {
+            throw new IllegalArgumentException("You can't book less than 1 ticket.");
+        } else {
+            this.availableTickets -= decrease;
+        }
+    }
 
     public LocalDateTime getEventDateAndTime() {
         return eventDateAndTime;

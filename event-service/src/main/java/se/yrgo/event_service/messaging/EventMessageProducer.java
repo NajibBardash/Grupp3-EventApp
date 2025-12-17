@@ -3,7 +3,6 @@ package se.yrgo.event_service.messaging;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
-import se.yrgo.event_service.domain.Event;
 
 @Service
 public class EventMessageProducer {

@@ -8,6 +8,9 @@ import se.yrgo.event_service.domain.Category;
 import se.yrgo.event_service.domain.Event;
 import se.yrgo.event_service.dtos.EventCreateDTO;
 import se.yrgo.event_service.dtos.EventResponseDTO;
+import se.yrgo.event_service.dtos.ReserveTicketsDTO;
+import se.yrgo.event_service.exceptions.CategoryNotFoundException;
+import se.yrgo.event_service.exceptions.EventNotFoundException;
 import se.yrgo.event_service.messaging.EventMessageProducer;
 
 import java.util.ArrayList;
@@ -41,17 +44,18 @@ public class EventServiceProdImpl implements EventService {
     public EventResponseDTO updateEvent(Long id, EventCreateDTO dto) {
 
         Event event = eventDao.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new EventNotFoundException("Event not found with id " + id));
 
         event.setName(dto.getName());
         event.setDescription(dto.getDescription());
         event.setLocation(dto.getLocation());
         event.setArtist(dto.getArtist());
         event.setCapacity(dto.getCapacity());
+        event.setAvailableTickets(dto.getAvailableTickets());
         event.setEventDateAndTime(dto.getEventDateAndTime());
 
         Category category = categoryDao.findByCategoryId(dto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id " + dto.getCategoryId()));
         event.setCategory(category);
 
         EventResponseDTO responseDTO = mapToResponse(event);
@@ -61,11 +65,23 @@ public class EventServiceProdImpl implements EventService {
         return responseDTO;
     }
 
+    @Override
+    @Transactional
+    public EventResponseDTO reserveEvent(ReserveTicketsDTO dto) {
+        Optional<Event> eventOpt = eventDao.findByEventId(dto.getEventId());
+        Event event = eventDao.findById(eventOpt.get().getId())
+                .orElseThrow(() -> new EventNotFoundException("Event not found with id " + eventOpt.get().getId()));
+
+        event.decreaseAvailableTickets(dto.getAmount());
+
+        return mapToResponse(event);
+    }
+
 
     @Override
     @Transactional
     public void deleteEvent(Long id) {
-        Event event = eventDao.findById(id).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventDao.findById(id).orElseThrow(() -> new EventNotFoundException("Event not found with id " + id));
         eventDao.deleteById(id);
 
         eventMessageProducer.sendEventDeleted(event.getEventId());
@@ -74,7 +90,7 @@ public class EventServiceProdImpl implements EventService {
     @Override
     public EventResponseDTO getEventById(Long id) {
         Event event = eventDao.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new EventNotFoundException("Event not found with id " + id));
 
         return mapToResponse(event);
     }
@@ -102,7 +118,7 @@ public class EventServiceProdImpl implements EventService {
 
     private Event mapToEntity(EventCreateDTO dto) {
         Category category = categoryDao.findByCategoryId(dto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id " + dto.getCategoryId()));
 
         return new Event(
                 generateEventId(),
