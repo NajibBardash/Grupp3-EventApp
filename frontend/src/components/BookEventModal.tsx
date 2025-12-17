@@ -11,7 +11,7 @@ import {
   Box,
   Chip,
 } from "@mui/material";
-import { EventDTO, createBooking } from "../api/UserFetchingService";
+import { type EventDTO, createBooking } from "../api/UserFetchingService";
 import { useAuth } from "../context/AuthContext";
 
 interface BookEventModalProps {

@@ -117,3 +117,77 @@ export async function deleteBooking(
     throw new Error("Kunde inte ta bort bokning");
   }
 }
+
+// Admin Event Management
+export interface EventCreateDTO {
+  name: string;
+  description: string;
+  location: string;
+  categoryId: number;
+  artist: string;
+  capacity: number;
+  availableTickets: number;
+  eventDateAndTime: string;
+}
+
+export async function createEvent(
+  eventData: EventCreateDTO,
+  authHeader: string
+): Promise<EventDTO> {
+  const res = await fetch("http://localhost:8081/api/events", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authHeader,
+    },
+    body: JSON.stringify(eventData),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Kunde inte skapa event");
+  }
+
+  const data: EventDTO = await res.json();
+  return data;
+}
+
+export async function updateEvent(
+  eventId: number,
+  eventData: EventCreateDTO,
+  authHeader: string
+): Promise<EventDTO> {
+  const res = await fetch(`http://localhost:8081/api/events/${eventId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authHeader,
+    },
+    body: JSON.stringify(eventData),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Kunde inte uppdatera event");
+  }
+
+  const data: EventDTO = await res.json();
+  return data;
+}
+
+export async function deleteEvent(
+  eventId: number,
+  authHeader: string
+): Promise<void> {
+  const res = await fetch(`http://localhost:8081/api/events/${eventId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: authHeader,
+    },
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Kunde inte ta bort event");
+  }
+}

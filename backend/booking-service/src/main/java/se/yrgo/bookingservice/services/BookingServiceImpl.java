@@ -94,6 +94,14 @@ public class BookingServiceImpl implements BookingService {
     public void deleteBooking(String bookingId) {
         Booking bookingToDelete = bookingRepository.findByBookingId(bookingId);
         if (bookingToDelete != null) {
+            // Refund tickets back to the event before deleting the booking
+            TicketReservationDetailsDTO refundDetails = TicketReservationDetailsDTO.builder()
+                    .amount(bookingToDelete.getTickets().size())
+                    .eventId(bookingToDelete.getEventId())
+                    .build();
+
+            cancelTicketReservation(refundDetails);
+
             bookingRepository.delete(bookingToDelete);
         } else {
             throw new BookingNotFoundException("Could not find booking with id: " + bookingId);
