@@ -24,7 +24,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/events/reserve").permitAll()
                         .requestMatchers("/api/events/**").hasRole("ADMIN")
                         .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
+//                        .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
