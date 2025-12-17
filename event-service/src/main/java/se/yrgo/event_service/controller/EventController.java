@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import se.yrgo.event_service.dtos.*;
+import se.yrgo.event_service.exceptions.CategoryNotFoundException;
+import se.yrgo.event_service.exceptions.EventNotFoundException;
 import se.yrgo.event_service.exceptions.InsufficientTicketsException;
 import se.yrgo.event_service.service.CategoryService;
 import se.yrgo.event_service.service.EventService;
@@ -36,7 +38,12 @@ public class EventController {
 
     @GetMapping("/event/{eventId}")
     public EventResponseDTO getEventById(@PathVariable String eventId) {
-        return eventService.getEventByEventId(eventId);
+        try {
+            return eventService.getEventByEventId(eventId);
+        } catch (EventNotFoundException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     @PostMapping
@@ -52,8 +59,12 @@ public class EventController {
             @PathVariable Long id,
             @RequestBody EventCreateDTO dto
     ) {
-        EventResponseDTO updated = eventService.updateEvent(id, dto);
-        return ResponseEntity.ok(updated);
+        try {
+            EventResponseDTO updated = eventService.updateEvent(id, dto);
+            return ResponseEntity.ok(updated);
+        } catch (EventNotFoundException | CategoryNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/reserve")
@@ -62,11 +73,9 @@ public class EventController {
             EventResponseDTO response = eventService.reserveEvent(dto);
             return ResponseEntity.ok(response);
 
-        }
-        catch (NoSuchElementException ne) {
+        } catch (NoSuchElementException ne) {
             return ResponseEntity.notFound().build();
-        }
-        catch (InsufficientTicketsException ie) {
+        } catch (InsufficientTicketsException ie) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -74,8 +83,13 @@ public class EventController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
-        eventService.deleteEvent(id);
-        return ResponseEntity.noContent().build();
+        try {
+            eventService.deleteEvent(id);
+            return ResponseEntity.noContent().build();
+        } catch (EventNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/categories")
@@ -85,7 +99,12 @@ public class EventController {
 
     @GetMapping("/categories/{id}")
     public CategoryResponseDTO getCategory(@PathVariable Long id) {
-        return categoryService.getCategory(id);
+        try {
+            return categoryService.getCategory(id);
+        } catch (CategoryNotFoundException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     @PostMapping("/categories")
@@ -101,14 +120,25 @@ public class EventController {
             @PathVariable Long id,
             @RequestBody CategoryCreateDTO dto
     ) {
-        CategoryResponseDTO updated = categoryService.updateCategory(id, dto);
-        return ResponseEntity.ok(updated);
+        try {
+            CategoryResponseDTO updated = categoryService.updateCategory(id, dto);
+            return ResponseEntity.ok(updated);
+        }
+        catch (CategoryNotFoundException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/categories/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
+        try {
+            categoryService.deleteCategory(id);
+            return ResponseEntity.noContent().build();
+        } catch (CategoryNotFoundException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 }

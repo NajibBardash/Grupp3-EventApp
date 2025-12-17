@@ -91,7 +91,7 @@ public class EventServiceProdImpl implements EventService {
     @Transactional
     public void deleteEvent(Long id) {
         Event event = eventDao.findById(id).orElseThrow(() -> new EventNotFoundException("Event not found with id " + id));
-        eventDao.deleteById(id);
+        eventDao.deleteById(event.getId());
 
         eventMessageProducer.sendEventDeleted(event.getEventId());
     }

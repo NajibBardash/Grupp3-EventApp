@@ -6,6 +6,7 @@ import se.yrgo.event_service.dataaccess.CategoryDao;
 import se.yrgo.event_service.domain.Category;
 import se.yrgo.event_service.dtos.CategoryCreateDTO;
 import se.yrgo.event_service.dtos.CategoryResponseDTO;
+import se.yrgo.event_service.exceptions.CategoryNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,21 +31,26 @@ public class CategoryServiceProdImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryResponseDTO updateCategory(Long id, CategoryCreateDTO dto) {
-        Category toBeUpdated = categoryDao.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
-        toBeUpdated.setType(dto.getType());
-
-        return mapToResponse(toBeUpdated);
+        try {
+            Category toBeUpdated = categoryDao.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+            toBeUpdated.setType(dto.getType());
+            return mapToResponse(toBeUpdated);
+        }
+        catch (CategoryNotFoundException e) {
+            throw new CategoryNotFoundException("Category was not updated.");
+        }
     }
 
     @Override
     @Transactional
     public void deleteCategory(Long id) {
-        categoryDao.deleteById(id);
+        Category category = categoryDao.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+        categoryDao.deleteById(category.getId());
     }
 
     @Override
     public CategoryResponseDTO getCategory(Long id) {
-        Category foundCategory = categoryDao.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+        Category foundCategory = categoryDao.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
 
         return mapToResponse(foundCategory);
     }
