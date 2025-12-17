@@ -1,19 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import BrowseEvents from "./pages/BrowseEvents";
-import BookEvent from "./pages/BookEvent";
-import MyBookings from "./pages/MyBookings";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import Events from "./pages/Events";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/events" element={<BrowseEvents />} />
-        <Route path="/book/:id" element={<BookEvent />} />
-        <Route path="/my-bookings" element={<MyBookings />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/events" element={<Events />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 

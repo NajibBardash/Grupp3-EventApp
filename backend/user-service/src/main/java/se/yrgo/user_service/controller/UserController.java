@@ -17,19 +17,24 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserDao userData;
+    private final PasswordEncoder passwordEncoder;
     private Set<User> users = new HashSet<>();
-    private PasswordEncoder passwordEncoder;
 
-    public UserController(UserDao userData ) {
+    public UserController(UserDao userData, PasswordEncoder passwordEncoder) {
         this.userData = userData;
-
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<UserResponseDTO> register(@RequestBody UserCreateDTO reg_dto) {
         User user = new User();
+        user.setCustomerId(reg_dto.getCustomerId());
+        user.setUsername(reg_dto.getUsername());
+        user.setName(reg_dto.getName());
         user.setEmail(reg_dto.getEmail());
         user.setPassword(passwordEncoder.encode(reg_dto.getPassword()));
+        user.setBirthdate(reg_dto.getBirthdate());
+        user.getRoles().add(se.yrgo.user_service.domain.Role.USER);
         userData.save(user);
         users.add(user);
         UserResponseDTO registerDTO = convertToDTO(user);
@@ -48,8 +53,13 @@ public class UserController {
     @RequestMapping(value = "/create-user", method = RequestMethod.POST)
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserCreateDTO create_dto) {
         User user = new User();
+        user.setCustomerId(create_dto.getCustomerId());
+        user.setUsername(create_dto.getUsername());
+        user.setName(create_dto.getName());
         user.setEmail(create_dto.getEmail());
         user.setPassword(passwordEncoder.encode(create_dto.getPassword()));
+        user.setBirthdate(create_dto.getBirthdate());
+        user.getRoles().add(se.yrgo.user_service.domain.Role.USER);
         userData.save(user);
         UserResponseDTO createDTO = convertToDTO(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createDTO);
@@ -118,7 +128,12 @@ public class UserController {
     private UserResponseDTO convertToDTO(User user) {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setId(user.getId());
+        dto.setCustomerId(user.getCustomerId());
+        dto.setUsername(user.getUsername());
+        dto.setName(user.getName());
         dto.setEmail(user.getEmail());
+        dto.setBirthdate(user.getBirthdate());
+        // Note: We don't include password in the response for security
         return dto;
     }
 

@@ -13,8 +13,8 @@ public interface UserDao extends JpaRepository<User, Long> {
     @Query ("SELECT i FROM User i WHERE  i.customerId= ?1")
     Optional<User> getUserByCustomerId(String customerId);
 
-    @Query ("SELECT n FROM User n WHERE n.name = ?1")
-    Optional<User> getUserByUsername(String name);
+    @Query ("SELECT n FROM User n WHERE n.username = ?1")
+    Optional<User> getUserByUsername(String username);
 
     @Query ("SELECT u FROM User u WHERE u.email = :email")
     Optional<User> getUserByEmail(String email);
