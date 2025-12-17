@@ -1,4 +1,4 @@
-package se.yrgo.bookingservice.messagequeues;
+package se.yrgo.bookingservice.messaging.messages;
 
 public record EventChangeMessage(
         String eventId,
