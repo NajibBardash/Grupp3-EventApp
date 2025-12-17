@@ -22,6 +22,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/events/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/events/reserve").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/events/cancel").permitAll()
                         .requestMatchers("/api/events/**").hasRole("ADMIN")
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
