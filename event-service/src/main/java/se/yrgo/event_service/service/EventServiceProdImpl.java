@@ -11,10 +11,12 @@ import se.yrgo.event_service.dtos.EventResponseDTO;
 import se.yrgo.event_service.dtos.ReserveTicketsDTO;
 import se.yrgo.event_service.exceptions.CategoryNotFoundException;
 import se.yrgo.event_service.exceptions.EventNotFoundException;
+import se.yrgo.event_service.exceptions.InsufficientTicketsException;
 import se.yrgo.event_service.messaging.EventMessageProducer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -61,22 +63,29 @@ public class EventServiceProdImpl implements EventService {
         EventResponseDTO responseDTO = mapToResponse(event);
         eventMessageProducer.sendEventUpdated(responseDTO.getEventId());
 
-
         return responseDTO;
     }
 
     @Override
     @Transactional
     public EventResponseDTO reserveEvent(ReserveTicketsDTO dto) {
-        Optional<Event> eventOpt = eventDao.findByEventId(dto.getEventId());
-        Event event = eventDao.findById(eventOpt.get().getId())
-                .orElseThrow(() -> new EventNotFoundException("Event not found with id " + eventOpt.get().getId()));
 
-        event.decreaseAvailableTickets(dto.getAmount());
-
-        return mapToResponse(event);
+        try {
+            Optional<Event> eventOpt = eventDao.findByEventId(dto.getEventId());
+            Event event = eventDao.findById(eventOpt.get().getId())
+                    .orElseThrow(() -> new EventNotFoundException("Event not found with id " + eventOpt.get().getId()));
+            event.decreaseAvailableTickets(dto.getAmount());
+            return mapToResponse(event);
+        }
+        catch (NoSuchElementException e) {
+            System.out.println("Event not found with id " + dto.getEventId());
+            return null;
+        }
+        catch (InsufficientTicketsException e) {
+            System.out.println("Insufficient tickets");
+            return null;
+        }
     }
-
 
     @Override
     @Transactional

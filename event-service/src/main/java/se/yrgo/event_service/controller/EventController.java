@@ -5,10 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import se.yrgo.event_service.dtos.*;
+import se.yrgo.event_service.exceptions.InsufficientTicketsException;
 import se.yrgo.event_service.service.CategoryService;
 import se.yrgo.event_service.service.EventService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/events")
@@ -56,8 +58,17 @@ public class EventController {
 
     @PutMapping("/reserve")
     public ResponseEntity<EventResponseDTO> reserveEvent(@RequestBody ReserveTicketsDTO dto) {
-        EventResponseDTO response = eventService.reserveEvent(dto);
-        return ResponseEntity.ok(response);
+        try {
+            EventResponseDTO response = eventService.reserveEvent(dto);
+            return ResponseEntity.ok(response);
+
+        }
+        catch (NoSuchElementException ne) {
+            return ResponseEntity.notFound().build();
+        }
+        catch (InsufficientTicketsException ie) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
