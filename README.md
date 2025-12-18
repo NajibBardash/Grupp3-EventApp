@@ -1,6 +1,12 @@
 ## Welcome to Event World
 
-Event world is a school project Spring Boot application that runs on a microservice architecture. It is built from a learning perspective and is not to be used as a working or secure application. There are surely many bugs to be encountered.
+Event world is a school project built with Spring Boot that utilizes a microservice architecture. It is built from a learning perspective and is not to be used as a working or secure application. There are surely many bugs to be encountered.
+
+#### Structure
+
+**user-service:** Controls authentication for users and a users details
+**event-service:** Handles events with their capacity, venues, available tickets
+**booking-service:** Handles bookings, depends on events and users, generates and owns tickets.
 
 #### Setup
 
