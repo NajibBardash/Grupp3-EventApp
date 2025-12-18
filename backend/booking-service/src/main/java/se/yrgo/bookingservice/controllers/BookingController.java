@@ -22,27 +22,22 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<BookingResponseDTO> registerNewBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
-
         try {
             BookingResponseDTO created =  bookingService.createBooking(bookingRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (BookingFailedException e) {
             return ResponseEntity.badRequest().build();
         }
-
     }
 
     @GetMapping("/{bookingId}")
-    public BookingResponseDTO getBooking(@PathVariable String bookingId) {
-        if (bookingId != null) {
-            return bookingService.getBookingById(bookingId);
-        }
-        return null;
+    public ResponseEntity<BookingResponseDTO> getBooking(@PathVariable String bookingId) {
+        return ResponseEntity.ok().body(bookingService.getBookingById(bookingId));
     }
 
     @GetMapping
-    public List<BookingResponseDTO> getAllBookings() {
-        return bookingService.getAllBookings();
+    public ResponseEntity<List<BookingResponseDTO>> getAllBookings() {
+        return ResponseEntity.ok().body(bookingService.getAllBookings());
     }
 
 //    @PutMapping("/{bookingId}")
