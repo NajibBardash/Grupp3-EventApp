@@ -123,7 +123,7 @@ export interface EventCreateDTO {
   name: string;
   description: string;
   location: string;
-  categoryId: number;
+  categoryId: string;
   artist: string;
   capacity: number;
   availableTickets: number;
@@ -208,4 +208,71 @@ export async function getAllCategories(): Promise<CategoryDTO[]> {
 
   const data: CategoryDTO[] = await res.json();
   return data;
+}
+
+// Admin Category Management
+export interface CategoryCreateDTO {
+  type: string;
+}
+
+export async function createCategory(
+  categoryData: CategoryCreateDTO,
+  authHeader: string
+): Promise<CategoryDTO> {
+  const res = await fetch("http://localhost:8081/api/events/categories", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authHeader,
+    },
+    body: JSON.stringify(categoryData),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Kunde inte skapa kategori");
+  }
+
+  const data: CategoryDTO = await res.json();
+  return data;
+}
+
+export async function updateCategory(
+  categoryId: number,
+  categoryData: CategoryCreateDTO,
+  authHeader: string
+): Promise<CategoryDTO> {
+  const res = await fetch(`http://localhost:8081/api/events/categories/${categoryId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authHeader,
+    },
+    body: JSON.stringify(categoryData),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Kunde inte uppdatera kategori");
+  }
+
+  const data: CategoryDTO = await res.json();
+  return data;
+}
+
+export async function deleteCategory(
+  categoryId: number,
+  authHeader: string
+): Promise<void> {
+  const res = await fetch(`http://localhost:8081/api/events/categories/${categoryId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: authHeader,
+    },
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Kunde inte ta bort kategori");
+  }
 }

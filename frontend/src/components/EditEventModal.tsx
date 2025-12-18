@@ -37,7 +37,7 @@ function EditEventModal({
     name: "",
     description: "",
     location: "",
-    categoryId: "CAT-MUSIC",
+    categoryId: "",
     artist: "",
     capacity: 100,
     availableTickets: 100,
@@ -64,7 +64,7 @@ function EditEventModal({
 
   useEffect(() => {
     if (event && categories.length > 0) {
-      // Find the categoryId based on the event's category type
+      // Find the category based on the event's category type
       const category = categories.find((cat) => cat.type === event.category);
 
       // Format datetime for input
