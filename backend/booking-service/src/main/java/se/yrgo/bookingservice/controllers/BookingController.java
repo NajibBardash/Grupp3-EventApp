@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import se.yrgo.bookingservice.dto.BookingRequestDTO;
 import se.yrgo.bookingservice.dto.BookingResponseDTO;
 import se.yrgo.bookingservice.exceptions.booking.BookingFailedException;
+import se.yrgo.bookingservice.services.BookingService;
 import se.yrgo.bookingservice.services.BookingServiceImpl;
 
 import java.util.List;
@@ -13,9 +14,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/booking")
 public class BookingController {
-    private final BookingServiceImpl bookingService;
+    private final BookingService bookingService;
 
-    public BookingController(BookingServiceImpl bookingService) {
+    public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }
 

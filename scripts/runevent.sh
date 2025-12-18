@@ -3,7 +3,7 @@ set -e
 
 echo "Building event-service (no clean/test)"
 
-cd ./backend/event-service
+cd ../backend/event-service
 mvn clean install -DskipTests
 
 echo "Starting event-service..."
