@@ -9,14 +9,14 @@ echo "Building services (no clean/test)"
 
 cd ./backend/user-service
 mvn install -DskipTests
-cd ./backend/event-service
+cd ../event-service
 mvn install -DskipTests
-cd ./backend/booking-service
+cd ../booking-service
 mvn install -DskipTests
 
 echo "Starting services..."
 
-cd backend/user-service
+cd ../user-service
 mvn spring-boot:run &
 cd ../event-service
 mvn spring-boot:run &
