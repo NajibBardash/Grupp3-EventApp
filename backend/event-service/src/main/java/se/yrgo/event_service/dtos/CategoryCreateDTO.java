@@ -1,19 +1,7 @@
 package se.yrgo.event_service.dtos;
 
-public class CategoryCreateDTO {
-    private String type;
-
-    public CategoryCreateDTO() {}
-
-    public CategoryCreateDTO(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-}
+/**
+ * This class is a dto for creating a category
+ * @param type
+ */
+public record CategoryCreateDTO(String type) {}

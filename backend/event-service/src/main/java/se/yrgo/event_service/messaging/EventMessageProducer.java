@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class produces a message to a message-broker when an event is either updated/cancelled
+ */
 @Service
 public class EventMessageProducer {
 

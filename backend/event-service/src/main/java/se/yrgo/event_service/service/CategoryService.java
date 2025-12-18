@@ -5,6 +5,9 @@ import se.yrgo.event_service.dtos.CategoryResponseDTO;
 
 import java.util.List;
 
+/**
+ * Interface for the CategoryService
+ */
 public interface CategoryService {
     CategoryResponseDTO createCategory(CategoryCreateDTO dto);
     CategoryResponseDTO updateCategory(Long id, CategoryCreateDTO dto);

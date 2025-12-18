@@ -16,6 +16,9 @@ import se.yrgo.event_service.messaging.EventMessageProducer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is an implementation of EventService
+ */
 @Service
 @Transactional(readOnly = true)
 public class EventServiceProdImpl implements EventService {
@@ -30,6 +33,11 @@ public class EventServiceProdImpl implements EventService {
         this.eventMessageProducer = eventMessageProducer;
     }
 
+    /**
+     * Create an event
+     * @param dto with data of the event to be created
+     * @return event as response-dto
+     */
     @Override
     @Transactional
     public EventResponseDTO createEvent(EventCreateDTO dto) {
@@ -38,6 +46,14 @@ public class EventServiceProdImpl implements EventService {
         return mapToResponse(saved);
     }
 
+    /**
+     * Update an event.
+     * If not found -> exception
+     * If successful pushes a message to the message-broker that an event has been updated.
+     * @param id of the event to be updated
+     * @param dto with new data for the event to update
+     * @return event as response-dto if successful, else throw exception if it cannot be found-
+     */
     @Override
     @Transactional
     public EventResponseDTO updateEvent(Long id, EventCreateDTO dto) {
@@ -63,6 +79,11 @@ public class EventServiceProdImpl implements EventService {
         return responseDTO;
     }
 
+    /**
+     * Make reservation for an event by decreasing available tickets
+     * @param dto with numbers of reserved tickets and eventId
+     * @return event as response-dto if successful, if not found -> exception
+     */
     @Override
     @Transactional
     public EventResponseDTO reserveEvent(ReserveTicketsDTO dto) {
@@ -75,6 +96,11 @@ public class EventServiceProdImpl implements EventService {
         return mapToResponse(event);
     }
 
+    /**
+     * Cancel reservation for an event by increasing available tickets.
+     * If not found -> exception
+     * @param dto with numbers of cancelled tickets and eventId
+     */
     @Override
     @Transactional
     public void cancelBooking(ReserveTicketsDTO dto) {
@@ -86,6 +112,12 @@ public class EventServiceProdImpl implements EventService {
         event.increaseAvailableTickets(dto.amount());
     }
 
+    /**
+     * Delete an event.
+     * If not successful, -> exception
+     * If successful pushes a message to the message-broker when an event has been deleted.
+     * @param id of the event to delete
+     */
     @Override
     @Transactional
     public void deleteEvent(Long id) {
@@ -95,6 +127,11 @@ public class EventServiceProdImpl implements EventService {
         eventMessageProducer.sendEventDeleted(event.getEventId());
     }
 
+    /**
+     * Fins an event by database-id
+     * @param id of the event to find
+     * @return event as response-dto
+     */
     @Override
     public EventResponseDTO getEventById(Long id) {
         Event event = eventDao.findById(id)
@@ -103,6 +140,11 @@ public class EventServiceProdImpl implements EventService {
         return mapToResponse(event);
     }
 
+    /**
+     * Find event by eventId
+     * @param eventId of the event to find
+     * @return event as response-dto if successful, else -> exception
+     */
     @Override
     public EventResponseDTO getEventByEventId(String eventId) {
         Event event = eventDao.findByEventId(eventId);
@@ -112,6 +154,10 @@ public class EventServiceProdImpl implements EventService {
         return mapToResponse(event);
     }
 
+    /**
+     * Find all events
+     * @return all found events as response-dtos
+     */
     @Override
     public List<EventResponseDTO> getAllEvents() {
         List<Event> events = eventDao.findAll();
@@ -124,6 +170,11 @@ public class EventServiceProdImpl implements EventService {
         return eventResponseDTOS;
     }
 
+    /**
+     * Helper-function for mapping create-dto to entity
+     * @param dto with data for created event
+     * @return event as entity
+     */
     private Event mapToEntity(EventCreateDTO dto) {
         Category category = categoryDao.findByCategoryId(dto.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found with id " + dto.getCategoryId()));
@@ -141,6 +192,11 @@ public class EventServiceProdImpl implements EventService {
         );
     }
 
+    /**
+     * Helper-function for mapping entity to response-dto
+     * @param event to map
+     * @return event as response-dtp
+     */
     private EventResponseDTO mapToResponse(Event event) {
         return new EventResponseDTO(
                 event.getId(),
@@ -157,6 +213,10 @@ public class EventServiceProdImpl implements EventService {
         );
     }
 
+    /**
+     * Helper-function to generate eventId
+     * @return a unique eventId
+     */
     private String generateEventId() {
         return "EVT-" + java.util.UUID.randomUUID()
                 .toString()

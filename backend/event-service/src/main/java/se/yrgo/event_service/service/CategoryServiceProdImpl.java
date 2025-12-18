@@ -11,6 +11,9 @@ import se.yrgo.event_service.exceptions.CategoryNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of CategoryService
+ */
 @Service
 @Transactional(readOnly = true)
 public class CategoryServiceProdImpl implements CategoryService {
@@ -20,6 +23,11 @@ public class CategoryServiceProdImpl implements CategoryService {
         this.categoryDao = categoryDao;
     }
 
+    /**
+     * Creates a category
+     * @param dto with data of the created category
+     * @return the category as a response-dto
+     */
     @Override
     @Transactional
     public CategoryResponseDTO createCategory(CategoryCreateDTO dto) {
@@ -28,16 +36,26 @@ public class CategoryServiceProdImpl implements CategoryService {
         return mapToResponse(saved);
     }
 
+    /**
+     * Update a category
+     * @param id of the category to update
+     * @param dto with new data for the category
+     * @return category as response-dto
+     */
     @Override
     @Transactional
     public CategoryResponseDTO updateCategory(Long id, CategoryCreateDTO dto) {
         Category toBeUpdated = categoryDao.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found with id " + id));
-        toBeUpdated.setType(dto.getType());
+        toBeUpdated.setType(dto.type());
 
         return mapToResponse(toBeUpdated);
     }
 
+    /**
+     * Delete a category
+     * @param id of the category to delete
+     */
     @Override
     @Transactional
     public void deleteCategory(Long id) {
@@ -45,6 +63,11 @@ public class CategoryServiceProdImpl implements CategoryService {
         categoryDao.deleteById(category.getId());
     }
 
+    /**
+     * Finds a category
+     * @param id of the category to find
+     * @return found category as response-dto
+     */
     @Override
     public CategoryResponseDTO getCategory(Long id) {
         Category foundCategory = categoryDao.findById(id).orElseThrow(() -> new CategoryNotFoundException("Category not found"));
@@ -52,6 +75,10 @@ public class CategoryServiceProdImpl implements CategoryService {
         return mapToResponse(foundCategory);
     }
 
+    /**
+     * Find all categories
+     * @return all found categories
+     */
     @Override
     public List<CategoryResponseDTO> getAllCategories() {
         List<Category> foundCategories = categoryDao.findAll();
@@ -64,10 +91,20 @@ public class CategoryServiceProdImpl implements CategoryService {
         return categoryResponseDTOs;
     }
 
+    /**
+     * Helper-function that maps create-dto to entity
+     * @param dto to map
+     * @return entity of the dto
+     */
     private Category mapToEntity(CategoryCreateDTO dto) {
-        return new Category(generateCategoryId(), dto.getType());
+        return new Category(generateCategoryId(), dto.type());
     }
 
+    /**
+     * Helper-function that maps entity to response-dto
+     * @param category to map
+     * @return response-dto of entity
+     */
     private CategoryResponseDTO mapToResponse(Category category) {
         return new CategoryResponseDTO(
                 category.getId(),
@@ -76,6 +113,10 @@ public class CategoryServiceProdImpl implements CategoryService {
         );
     }
 
+    /**
+     * Helper-function that generates a categoryId
+     * @return a string with a unique categoryId
+     */
     private String generateCategoryId() {
         return "CTG-" + java.util.UUID.randomUUID()
                 .toString()
