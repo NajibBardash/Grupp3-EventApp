@@ -30,3 +30,9 @@ chmod u+x <--filename.sh-->
    4. frontend.sh
 
    _If the setup script complains that a docker image already exists, either delete it or start the container._
+
+5. See that ActiveMQ gets messages from event-service that are consumed, go to ActiveMQ in the browser and find eventUpdateQueue.
+  1. If you updated/deleted an event. You should see that messages have been enqueued and dequeued.
+     
+6. All endpoints can be tested through the frontend, no need for Postman or such services :)
+
