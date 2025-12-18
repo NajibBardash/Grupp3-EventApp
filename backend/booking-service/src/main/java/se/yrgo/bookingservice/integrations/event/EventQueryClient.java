@@ -16,6 +16,15 @@ public class EventQueryClient {
         this.restClient = RestClient.builder().baseUrl("http://localhost:8081").build();
     }
 
+    /**
+     * This is a neat little REST call to the event-service to
+     * reserve or cancel ticket reservations depending on payment success.
+     * It throws different exceptions based on the response from even-service and
+     * these bubble up and get caught as BookingFailedExceptions.
+     * The reason for the enums are to avoid repeated code.
+     * @param ticketReservationDetailsDTO the amount of tickets and the event this concerns
+     * @param method are we making/removing a reservation?
+     */
     public void handleReservation(TicketReservationDetailsDTO ticketReservationDetailsDTO, EventRequestMethod method) {
         restClient.put()
                 .uri("/api/events/" + method.getValue())

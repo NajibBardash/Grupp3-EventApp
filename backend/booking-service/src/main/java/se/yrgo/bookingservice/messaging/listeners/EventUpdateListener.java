@@ -17,6 +17,18 @@ public class EventUpdateListener {
         this.bookingService = bookingService;
     }
 
+    /**
+     * Listens to the eventUpdateQueue for any edits that are made to events in
+     * event-service, it's supposed to send these onward to the notification-service
+     * but that was never implemented
+     *
+     * A better choice would be to have method directly in the notification service
+     * and then have that service ask this one to provide booking context.
+     *
+     * But for now, this method just notifies the console, realistically this would be
+     * an email sent to affected Users emails/phone numbers.
+     * @param message a simple message of an event that has been updated.
+     */
     @JmsListener(destination="eventUpdateQueue")
     public void processMessage(EventChangeMessage message) {
         System.out.println("Updated event: " + message.eventId() + ": " + message.message());
