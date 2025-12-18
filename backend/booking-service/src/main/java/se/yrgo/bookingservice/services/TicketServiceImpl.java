@@ -19,6 +19,6 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public void deleteTicket(Ticket ticket) {
-
+        ticketRepository.delete(ticket);
     }
 }
