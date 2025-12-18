@@ -20,13 +20,13 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<String> registerNewBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
+    public ResponseEntity<BookingResponseDTO> registerNewBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
 
         try {
             BookingResponseDTO created =  bookingService.createBooking(bookingRequestDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Booking successfully created: " + created.getBookingId() );
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (BookingFailedException e) {
-            return ResponseEntity.badRequest().body("Failed to create booking: " + e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
 
     }

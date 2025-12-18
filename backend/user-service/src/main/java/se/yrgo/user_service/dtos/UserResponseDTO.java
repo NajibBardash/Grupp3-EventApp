@@ -1,9 +1,11 @@
 package se.yrgo.user_service.dtos;
 
 import jakarta.validation.constraints.*;
+import se.yrgo.user_service.domain.Role;
 
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Set;
 
 public class UserResponseDTO {
     private Long id;
@@ -20,10 +22,11 @@ public class UserResponseDTO {
     @NotBlank
     private String password;
     private LocalDate birthdate;
+    private Set<Role> roles;
 
     public UserResponseDTO() {}
 
-    public UserResponseDTO(Long id, String username, String customerId, String name, String email, String password, LocalDate birthdate) {
+    public UserResponseDTO(Long id, String username, String customerId, String name, String email, String password, LocalDate birthdate, Set<Role> roles) {
         this.id = id;
         this.customerId = customerId;
         this.username = username;
@@ -31,6 +34,7 @@ public class UserResponseDTO {
         this.email = email;
         this.password = password;
         this.birthdate = birthdate;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -89,16 +93,24 @@ public class UserResponseDTO {
         this.birthdate = birthdate;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         UserResponseDTO that = (UserResponseDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(customerId, that.customerId) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(birthdate, that.birthdate);
+        return Objects.equals(id, that.id) && Objects.equals(customerId, that.customerId) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(birthdate, that.birthdate) && Objects.equals(roles, that.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerId, name, email, password, birthdate);
+        return Objects.hash(id, customerId, name, email, password, birthdate, roles);
     }
 
     @Override
@@ -110,6 +122,7 @@ public class UserResponseDTO {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", birthdate=" + birthdate +
+                ", roles=" + roles +
                 '}';
     }
 }
