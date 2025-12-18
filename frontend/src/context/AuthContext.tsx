@@ -7,11 +7,13 @@ export interface UserDTO {
   name: string;
   email: string;
   birthdate: string;
+  roles: string[];
 }
 
 interface AuthContextType {
   user: UserDTO | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   getAuthHeader: () => string;
@@ -74,11 +76,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return `Basic ${encoded}`;
   };
 
+  const isAdmin = user?.roles?.includes("ADMIN") ?? false;
+
   return (
     <AuthContext.Provider
       value={{
         user,
         isAuthenticated: !!user,
+        isAdmin,
         login,
         logout,
         getAuthHeader,

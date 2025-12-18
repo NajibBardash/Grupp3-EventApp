@@ -133,6 +133,7 @@ public class UserController {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setBirthdate(user.getBirthdate());
+        dto.setRoles(user.getRoles());
         // Note: We don't include password in the response for security
         return dto;
     }

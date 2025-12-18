@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -37,9 +37,11 @@ function Navbar() {
               <Button color="inherit" component={Link} to="/bookings">
                 My Bookings
               </Button>
-              <Button color="inherit" component={Link} to="/admin">
-                Admin
-              </Button>
+              {isAdmin && (
+                <Button color="inherit" component={Link} to="/admin">
+                  Admin
+                </Button>
+              )}
               <Typography
                 variant="body1"
                 sx={{
