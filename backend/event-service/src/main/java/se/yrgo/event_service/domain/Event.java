@@ -144,7 +144,7 @@ public class Event {
      * @param increase the number available tickets with the increase-amount
      */
     public void increaseAvailableTickets(int increase) {
-        if (increase > this.availableTickets) {
+        if (increase > (this.capacity - this.availableTickets)) {
             throw new InsufficientTicketsException("Can't return more tickets than there are tickets booked.");
         }
         else if (increase <= 0) {
