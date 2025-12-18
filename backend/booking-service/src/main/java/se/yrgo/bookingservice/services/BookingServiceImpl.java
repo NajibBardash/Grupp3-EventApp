@@ -35,6 +35,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
+    /**
+     * Before a booking is registered, some things must be considered:
+     * Are tickets available? Then try to reserve them!
+     * Is the payment successful?(mocked as f**k) Create tickets, add them to a new booking
+     * Did the reservation fail? Don't go any further!
+     * Did the payment fail? cancel the reservation!
+     */
     public BookingResponseDTO createBooking(BookingRequestDTO dto) {
 
         TicketReservationDetailsDTO reservationDetails = getReservationDetails(dto);
@@ -124,8 +131,12 @@ public class BookingServiceImpl implements BookingService {
         ).toList();
     }
 
+    /**
+     * Try to reserve tickets via event-service, wrap all expected
+     * exceptions in a BookingFailedException with cause.
+     * @param reservationDetails how many tickets are we trying to reserve and what event.
+     */
     private void reserveTickets(TicketReservationDetailsDTO reservationDetails) {
-
         try {
             eventQueryClient.handleReservation(reservationDetails, EventRequestMethod.RESERVE);
         }  catch (EventNotFoundException
@@ -135,16 +146,30 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    /**
+     * Try to cancel a ticket reservation if the booking process failed.
+     * Also handles exceptions but they aren't really expected.
+     * @param reservationDetails how many tickets are reserved and need cancelling, and the event.
+     */
     private void cancelTicketReservation(TicketReservationDetailsDTO reservationDetails) {
         try {
             eventQueryClient.handleReservation(reservationDetails, EventRequestMethod.CANCEL);
-        } catch (EventNotFoundException
+        }
+        // should only throw EventNotFound and EventServiceUnavailableExceptions
+        catch (EventNotFoundException
                  | NoTicketsAvailableException
                  | EventServiceUnavailableException e) {
             System.err.println("Failed to cancel reservation for event " + reservationDetails.getEventId() + ": " + e.getMessage());
         }
     }
 
+    /**
+     * Small helper to keep concerns separate and methods shorter.
+     * It just takes the needed data for a reservation request.
+     * @param dto data for Booking info, not needed.
+     * @return a dto with just ticket amount and event id to mirror the
+     * dto in event-service
+     */
     private static TicketReservationDetailsDTO getReservationDetails(BookingRequestDTO dto) {
         return TicketReservationDetailsDTO.builder()
                 .amount(dto.getNumberOfTickets())
@@ -152,6 +177,11 @@ public class BookingServiceImpl implements BookingService {
                 .build();
     }
 
+    /**
+     * A stupid mapper, makes DTOs out of booking-entity objects
+     * @param booking JPA entity, copy into the DTO
+     * @return a DTO clone of the parameter booking.
+     */
     private BookingResponseDTO mapToResponseDTO(Booking booking) {
         return new BookingResponseDTO(
                 booking.getBookingId(),

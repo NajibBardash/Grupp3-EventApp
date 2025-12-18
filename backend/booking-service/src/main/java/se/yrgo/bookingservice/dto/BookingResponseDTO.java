@@ -8,6 +8,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * DTO to return full context data for a booking, except database PK.
+ */
 public class BookingResponseDTO {
     private String bookingId;
     private LocalDateTime bookingDate;

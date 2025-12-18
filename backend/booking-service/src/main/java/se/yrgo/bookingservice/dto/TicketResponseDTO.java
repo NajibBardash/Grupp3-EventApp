@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ * DTO to provide ticket data.
+ */
 public class TicketResponseDTO {
     private String ticketId;
     private String bookingId;
