@@ -36,9 +36,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
-    //TODO: Solve this later, with the other applications.
-    //private List<Booking> bookings = new ArrayList<>();
-
     public User() {
 
     }
@@ -139,9 +136,5 @@ public class User {
                 '}';
     }
 
-    // TODO: See List <Booking> Above
-//    public List<Booking> getBookings() {
-//        return bookings;
-//    }
 
 }
