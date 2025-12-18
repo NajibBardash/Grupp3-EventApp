@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Building event-service (no clean/test)"
+echo "Building event-service..."
 
 cd ../backend/event-service
 mvn clean install -DskipTests
