@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+/**
+ * A dto-class for creating an event
+ */
 @Component
 public class EventCreateDTO {
     private String name;

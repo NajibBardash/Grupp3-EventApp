@@ -29,7 +29,7 @@ public class EventController {
     }
 
     /**
-     *
+     * Looks up all events
      * @return all events
      */
     @GetMapping
@@ -38,9 +38,9 @@ public class EventController {
     }
 
     /**
-     *
+     * Looks up an event
      * @param id of the event to be found
-     * @return the event with given id (database-id)
+     * @return the event with given id (database-id) else 404
      */
     @GetMapping("/{id}")
     public ResponseEntity<EventResponseDTO> getEvent(@PathVariable Long id) {
@@ -54,7 +54,7 @@ public class EventController {
     }
 
     /**
-     *
+     * Looks up an event
      * @param eventId of the event to be found
      * @return the event with given eventId (non-database id), else 404
      */
@@ -68,6 +68,11 @@ public class EventController {
         }
     }
 
+    /**
+     * Creates an event (only for admin)
+     * @param dto is the data of the event to be created
+     * @return 201 if successful
+     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EventResponseDTO> createEvent(@RequestBody EventCreateDTO dto) {
@@ -75,6 +80,12 @@ public class EventController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /**
+     *  Updates an event (only for admin)
+     * @param id of the event to update
+     * @param dto the new data for the event
+     * @return 200 if ok, else 404
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EventResponseDTO> updateEvent(
@@ -89,6 +100,11 @@ public class EventController {
         }
     }
 
+    /**
+     * Makes a reservation for an event by modifying available tickets.
+     * @param dto is data with (number of tickets + eventId)
+     * @return 200 if ok, 404 if not found, 400 if wrong input of tickets
+     */
     @PutMapping("/reserve")
     public ResponseEntity<EventResponseDTO> reserveEvent(@RequestBody ReserveTicketsDTO dto) {
         try {
@@ -102,6 +118,11 @@ public class EventController {
         }
     }
 
+    /**
+     * Cancels ticket-reservation for an event by increasing available tickets.
+     * @param dto is data with (number of tickets + eventId)
+     * @return 201 if ok, 404 if not found, 400 if wrong input of tickets
+     */
     @PutMapping("/cancel")
     public ResponseEntity<Void> cancelBooking(@RequestBody ReserveTicketsDTO dto) {
         try {
@@ -115,6 +136,11 @@ public class EventController {
         }
     }
 
+    /**
+     * Deletes an event (only for admin)
+     * @param id of the event to delete
+     * @return 201 if successful, 404 if not found
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
@@ -127,11 +153,20 @@ public class EventController {
         }
     }
 
+    /**
+     * Return all categories
+     * @return all event-categories
+     */
     @GetMapping("/categories")
     public List<CategoryResponseDTO> getAllCategories() {
         return categoryService.getAllCategories();
     }
 
+    /**
+     * Returns a specific category
+     * @param id of the catefory to return
+     * @return 200 if successful, else 404 if not found
+     */
     @GetMapping("/categories/{id}")
     public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable Long id) {
         try {
@@ -142,6 +177,11 @@ public class EventController {
         }
     }
 
+    /**
+     * Create a new categoru (only for admin)
+     * @param dto with data of the category
+     * @return 201 if successful
+     */
     @PostMapping("/categories")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryCreateDTO dto) {
@@ -149,6 +189,12 @@ public class EventController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Update a category (only for admin)
+     * @param id of the category to update
+     * @param dto with new data for the category
+     * @return 200 if successful, else 404 if not found
+     */
     @PutMapping("/categories/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDTO> updateCategory(
@@ -164,6 +210,11 @@ public class EventController {
         }
     }
 
+    /**
+     * Delete a category (only for admin)
+     * @param id of the category to delete
+     * @return 201 if successful, else 404 if not found
+     */
     @DeleteMapping("/categories/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {

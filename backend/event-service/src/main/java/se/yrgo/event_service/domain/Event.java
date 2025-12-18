@@ -6,6 +6,11 @@ import se.yrgo.event_service.exceptions.InsufficientTicketsException;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * This class represents an event-entity.
+ * Has a many-to-one relationship to category.
+ * Each category has a column in the event-table with the categoryId.
+ */
 @Entity
 public class Event {
     @Id
@@ -116,6 +121,12 @@ public class Event {
         this.availableTickets = availableTickets;
     }
 
+    /**
+     * When a reservation for an event is made, the number of available tickets is decreased.
+     * If the number of reserved tickets is greater than the number of available -> exception
+     * If the number of reserved tickets is less than 1 -> exception
+     * @param decrease the number available tickets with the decrease-amount
+     */
     public void decreaseAvailableTickets(int decrease) {
         if (decrease > this.availableTickets) {
             throw new InsufficientTicketsException("There are fewer tickets available than you have requested.");
@@ -126,6 +137,12 @@ public class Event {
         }
     }
 
+    /**
+     * When a reservation for an event is cancelled, the number of available tickets is increased.
+     * If the number of cancelled tickets is greater than the number of booked -> exception
+     * If the number of cancelled tickets is less than 1 -> exception
+     * @param increase the number available tickets with the increase-amount
+     */
     public void increaseAvailableTickets(int increase) {
         if (increase > this.availableTickets) {
             throw new InsufficientTicketsException("Can't return more tickets than there are tickets booked.");
@@ -148,12 +165,18 @@ public class Event {
         return createdAt;
     }
 
+    /**
+     * When an event is created, the entity gets a timestamp of when it was created and updated
+     */
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
     }
 
+    /**
+     * When an event is uodated, the entity gets a timestamp of when it was updated
+     */
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();

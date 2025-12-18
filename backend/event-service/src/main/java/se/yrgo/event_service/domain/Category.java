@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class is an entity which represents an event-category.
+ * Has a one-to-many relationship with events.
+ */
 @Entity
 public class Category {
     @Id
