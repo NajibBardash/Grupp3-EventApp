@@ -6,6 +6,11 @@ import se.yrgo.bookingservice.domain.Ticket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Helper class to create a desired amount of tickets after payment has been
+ * confirmed.
+ * TODO: pricing is not implemented
+ */
 public class TicketFactory {
     public static List<Ticket> createTickets(int amount, Booking booking) {
         List<Ticket> tickets = new ArrayList<Ticket>();

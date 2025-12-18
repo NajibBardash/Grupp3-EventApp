@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+/**
+ * DTO for integration between booking and event.
+ * sent via REST to either reserve tickets for an event
+ * or cancel a reservation.
+ */
 public class TicketReservationDetailsDTO {
     private int amount;
     private String eventId;
