@@ -5,6 +5,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import se.yrgo.bookingservice.messaging.messages.NotificationMessage;
 
+/**
+ * NOT IMPLEMENTED, THIS IS CANCELLED
+ */
 @Service
 public class CustomerNotificationSender {
     private final JmsTemplate jmsTemplate;
