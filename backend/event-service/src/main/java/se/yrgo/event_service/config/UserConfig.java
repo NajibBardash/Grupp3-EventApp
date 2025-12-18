@@ -7,6 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+/**
+ * This class generates two dummy users, one as admin and one as user, they match the dummy-users in user-service.
+ * With this we can now try and log in as an admin
+ */
 @Configuration
 public class UserConfig {
 
