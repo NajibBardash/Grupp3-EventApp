@@ -12,17 +12,18 @@ public class UserConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails admin = User.withUsername("admin")
-                .password("{noop}password")
-                .roles("ADMIN")
+        // User credentials matching user-service DataInitializer
+        UserDetails user = User.withUsername("user")
+                .password("{noop}secret")
+                .roles("USER", "ADMIN")
                 .build();
 
-        UserDetails user = User.withUsername("user")
+        UserDetails testUser = User.withUsername("testuser")
                 .password("{noop}password")
                 .roles("USER")
                 .build();
 
-        return new InMemoryUserDetailsManager(admin, user);
+        return new InMemoryUserDetailsManager(user, testUser);
     }
 }
 

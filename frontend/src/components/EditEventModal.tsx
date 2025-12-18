@@ -10,7 +10,7 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material";
-import { updateEvent, type EventDTO } from "../api/UserFetchingService";
+import { updateEvent, getAllCategories, type EventDTO } from "../api/UserFetchingService";
 import { useAuth } from "../context/AuthContext";
 
 interface EditEventModalProps {
@@ -20,11 +20,11 @@ interface EditEventModalProps {
   onSuccess: () => void;
 }
 
-const categories = [
-  { id: 1, type: "Music" },
-  { id: 2, type: "Theater" },
-  { id: 3, type: "Sports" },
-];
+interface Category {
+  id: number;
+  categoryId: string;
+  type: string;
+}
 
 function EditEventModal({
   open,
@@ -32,11 +32,12 @@ function EditEventModal({
   onClose,
   onSuccess,
 }: EditEventModalProps) {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     location: "",
-    categoryId: 1,
+    categoryId: "CAT-MUSIC",
     artist: "",
     capacity: 100,
     availableTickets: 100,
@@ -47,13 +48,24 @@ function EditEventModal({
   const { getAuthHeader } = useAuth();
 
   useEffect(() => {
-    if (event) {
-      // Convert category name to categoryId
-      const categoryMap: { [key: string]: number } = {
-        Music: 1,
-        Theater: 2,
-        Sports: 3,
-      };
+    if (open) {
+      loadCategories();
+    }
+  }, [open]);
+
+  const loadCategories = async () => {
+    try {
+      const cats = await getAllCategories();
+      setCategories(cats);
+    } catch (err) {
+      console.error("Failed to load categories", err);
+    }
+  };
+
+  useEffect(() => {
+    if (event && categories.length > 0) {
+      // Find the categoryId based on the event's category type
+      const category = categories.find((cat) => cat.type === event.category);
 
       // Format datetime for input
       const dateTime = new Date(event.eventDateAndTime)
@@ -64,23 +76,21 @@ function EditEventModal({
         name: event.name,
         description: event.description,
         location: event.location,
-        categoryId: categoryMap[event.category] || 1,
+        categoryId: category ? category.categoryId : categories[0].categoryId,
         artist: event.artist,
         capacity: event.capacity,
         availableTickets: event.availableTickets,
         eventDateAndTime: dateTime,
       });
     }
-  }, [event]);
+  }, [event, categories]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]:
-        name === "capacity" ||
-        name === "availableTickets" ||
-        name === "categoryId"
+        name === "capacity" || name === "availableTickets"
           ? Number(value)
           : value,
     }));
@@ -189,7 +199,7 @@ function EditEventModal({
                 disabled={loading}
               >
                 {categories.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
+                  <MenuItem key={category.categoryId} value={category.categoryId}>
                     {category.type}
                   </MenuItem>
                 ))}

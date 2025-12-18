@@ -191,3 +191,21 @@ export async function deleteEvent(
     throw new Error(error || "Kunde inte ta bort event");
   }
 }
+
+// Categories
+export interface CategoryDTO {
+  id: number;
+  categoryId: string;
+  type: string;
+}
+
+export async function getAllCategories(): Promise<CategoryDTO[]> {
+  const res = await fetch("http://localhost:8081/api/events/categories");
+
+  if (!res.ok) {
+    throw new Error("Kunde inte hämta kategorier");
+  }
+
+  const data: CategoryDTO[] = await res.json();
+  return data;
+}

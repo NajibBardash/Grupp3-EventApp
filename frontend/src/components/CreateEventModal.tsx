@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -10,7 +10,7 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material";
-import { createEvent } from "../api/UserFetchingService";
+import { createEvent, getAllCategories } from "../api/UserFetchingService";
 import { useAuth } from "../context/AuthContext";
 
 interface CreateEventModalProps {
@@ -19,18 +19,19 @@ interface CreateEventModalProps {
   onSuccess: () => void;
 }
 
-const categories = [
-  { id: 1, type: "Music" },
-  { id: 2, type: "Theater" },
-  { id: 3, type: "Sports" },
-];
+interface Category {
+  id: number;
+  categoryId: string;
+  type: string;
+}
 
 function CreateEventModal({ open, onClose, onSuccess }: CreateEventModalProps) {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     location: "",
-    categoryId: 1,
+    categoryId: "CAT-MUSIC",
     artist: "",
     capacity: 100,
     availableTickets: 100,
@@ -40,11 +41,29 @@ function CreateEventModal({ open, onClose, onSuccess }: CreateEventModalProps) {
   const [error, setError] = useState("");
   const { getAuthHeader } = useAuth();
 
+  useEffect(() => {
+    if (open) {
+      loadCategories();
+    }
+  }, [open]);
+
+  const loadCategories = async () => {
+    try {
+      const cats = await getAllCategories();
+      setCategories(cats);
+      if (cats.length > 0) {
+        setFormData((prev) => ({ ...prev, categoryId: cats[0].categoryId }));
+      }
+    } catch (err) {
+      console.error("Failed to load categories", err);
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "capacity" || name === "availableTickets" || name === "categoryId"
+      [name]: name === "capacity" || name === "availableTickets"
         ? Number(value)
         : value,
     }));
@@ -63,7 +82,7 @@ function CreateEventModal({ open, onClose, onSuccess }: CreateEventModalProps) {
         name: "",
         description: "",
         location: "",
-        categoryId: 1,
+        categoryId: categories.length > 0 ? categories[0].categoryId : "CAT-MUSIC",
         artist: "",
         capacity: 100,
         availableTickets: 100,
@@ -159,7 +178,7 @@ function CreateEventModal({ open, onClose, onSuccess }: CreateEventModalProps) {
                 disabled={loading}
               >
                 {categories.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
+                  <MenuItem key={category.categoryId} value={category.categoryId}>
                     {category.type}
                   </MenuItem>
                 ))}
