@@ -16,6 +16,13 @@ import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * This class configures the security-settings for event-service.
+ * All gets are allowed. PUT's of reserving/canceling booking are allowed.
+ * Other endpoints are reserved for admins.
+ * H2-console is also accessable.
+ * In addition, there are no CORS-blockers for the frontend-page: (localhost:5173)
+ */
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {

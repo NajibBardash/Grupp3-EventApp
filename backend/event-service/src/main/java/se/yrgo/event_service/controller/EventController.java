@@ -13,6 +13,9 @@ import se.yrgo.event_service.service.EventService;
 
 import java.util.List;
 
+/**
+ * This controller handles the interaction with events.
+ */
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
@@ -25,11 +28,20 @@ public class EventController {
         this.categoryService = categoryService;
     }
 
+    /**
+     *
+     * @return all events
+     */
     @GetMapping
     public List<EventResponseDTO> getAllEvents() {
         return eventService.getAllEvents();
     }
 
+    /**
+     *
+     * @param id of the event to be found
+     * @return the event with given id (database-id)
+     */
     @GetMapping("/{id}")
     public ResponseEntity<EventResponseDTO> getEvent(@PathVariable Long id) {
         try {
@@ -41,6 +53,11 @@ public class EventController {
         }
     }
 
+    /**
+     *
+     * @param eventId of the event to be found
+     * @return the event with given eventId (non-database id), else 404
+     */
     @GetMapping("/event/{eventId}")
     public ResponseEntity<EventResponseDTO> getEventById(@PathVariable String eventId) {
         try {

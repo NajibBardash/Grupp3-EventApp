@@ -11,6 +11,9 @@ import se.yrgo.event_service.domain.Event;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * This class just sets up some dummy data of categories and events when launching event-service.
+ */
 @Configuration
 public class DataInitializer {
 
